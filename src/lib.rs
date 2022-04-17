@@ -90,11 +90,11 @@
 //!     let manifest_dir_string = env::var("CARGO_MANIFEST_DIR").unwrap();
 //!     let build_type = env::var("PROFILE").unwrap();
 //!     let target = env::var("TARGET").unwrap();
-//!     let path = Path::new(&manifest_dir_string)
+//!
+//!     Path::new(&manifest_dir_string)
 //!         .join("target")
 //!         .join(target)
-//!         .join(build_type);
-//!     return PathBuf::from(path);
+//!         .join(build_type)
 //! }
 //!
 //! fn main() -> std::io::Result<()> {

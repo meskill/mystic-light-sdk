@@ -17,7 +17,7 @@ impl MysticLightSDK {
         result: MysticLightSdkResult,
     ) -> std::result::Result<(), MysticLightSDKError> {
         match result {
-            0 => return Ok(()),
+            0 => Ok(()),
             -1 => Err(MysticLightSDKError::Generic),
             -2 => Err(MysticLightSDKError::Timeout),
             -3 => Err(MysticLightSDKError::NotImplemented),
@@ -77,9 +77,7 @@ impl MysticLightSDK {
             .map(|(device_name, led_count)| {
                 let led_count: u32 = led_count.parse().expect("Cannot parse led count str");
 
-                let device = Device::new(Rc::clone(&self.library), device_name, led_count);
-
-                device
+                Device::new(Rc::clone(&self.library), device_name, led_count)
             })
             .collect())
     }

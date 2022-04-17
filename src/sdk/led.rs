@@ -226,7 +226,8 @@ impl DeviceLed {
                     .supported_styles
                     .iter()
                     .fold(String::new(), |acc, s| format!("{}, {}", acc, s)),
-            })?;
+            }
+            .into());
         }
 
         unsafe {

@@ -23,24 +23,26 @@ pub struct Bstr {
 }
 
 impl Bstr {
-    /// Create new wrapper for the empty BSTR string
-    ///
-    /// # Panics
-    ///
-    /// - In case of error while allocating BSTR string
-    pub fn new() -> Self {
-        Bstr {
-            bstr: U16String::new()
-                .allocate_bstr()
-                .expect("Cannot create BSTR"),
-        }
-    }
-
     /// Returns inner pointer to the BSTR string.
     ///
     /// This method should be used to get actually BSTR that most of the FFI expects
     pub fn as_ptr(&self) -> BSTR {
         self.bstr.as_ptr()
+    }
+}
+
+impl Default for Bstr {
+    /// Create new wrapper for the empty BSTR string
+    ///
+    /// # Panics
+    ///
+    /// - In case of error while allocating BSTR string
+    fn default() -> Self {
+        Bstr {
+            bstr: U16String::new()
+                .allocate_bstr()
+                .expect("Cannot create BSTR"),
+        }
     }
 }
 
