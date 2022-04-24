@@ -2,12 +2,23 @@
 name = "mystic_light_sdk"
 version = "0.1.0"
 edition = "2021"
+authors = ["meskill"]
+description = "A Rust wrapper for the MysticLight SDK (MSI hardware and peripherals)"
+homepage = "https://github.com/meskill/mystic-light-sdk"
+repository = "https://github.com/meskill/mystic-light-sdk"
+license-file = "LICENSE.txt"
+keywords = ["mystic-light", "sdk", "rgb", "rgb-led"]
+categories = ["api-bindings"]
+include = ["/src/**", "README.md"]
+
+[badges]
+maintenance = { status = "passively-maintained" }
 
 [dependencies]
 custom_error = "1.9.2"
 libloading = "0.7.3"
 oaidl = "0.2.1"
-widestring = "0.4.3"
+widestring = "0.4.3" # version compatible with `oaidl`
 winapi = { version = "0.3.9" }
 
 [build-dependencies]
