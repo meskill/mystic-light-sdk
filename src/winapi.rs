@@ -99,8 +99,15 @@ impl<T: FromIterator<String>> FromSafeArray for T {
     ///
     /// # Examples
     ///
-    /// ```
-    /// let array: *mut SAFEARRAY;
+    /// ```ignore
+    /// use std::collections::HashSet;
+    /// use std::ptr::null_mut;
+    /// use winapi::um::oaidl::SAFEARRAY;
+    /// use mystic_light_sdk::winapi::FromSafeArray;
+    ///
+    /// let array: *mut SAFEARRAY = null_mut();
+    ///
+    /// // fill the array somehow
     ///
     /// let vec: Vec<String> = Vec::from_safearray(array);
     ///
