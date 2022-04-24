@@ -120,3 +120,63 @@ impl<T: FromIterator<String>> FromSafeArray for T {
         vec.iter().map(|s| s.to_string_lossy()).collect()
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use std::collections::HashSet;
+
+    use super::*;
+
+    #[test]
+    fn convert_to_bstr_and_backward() {
+        let s = "some test string";
+
+        let bstr = Bstr::from(s);
+
+        assert_eq!(bstr.to_string(), s);
+    }
+
+    #[test]
+    fn convert_from_raw_bstr() {
+        let s = "some test string";
+
+        let bstr = Bstr::from(s);
+
+        let bstr_from = Bstr::from(bstr.as_ptr());
+
+        assert_eq!(bstr_from.to_string(), s);
+    }
+
+    #[test]
+    fn convert_from_safearray_to_vec() {
+        let v = vec![
+            U16String::from_str("test1"),
+            U16String::from_str("test2"),
+            U16String::from_str("test3"),
+        ];
+
+        let safe_array = v.into_iter().into_safearray().unwrap();
+
+        let parsed = Vec::from_safearray(safe_array.as_ptr());
+
+        assert_eq!(parsed, vec!["test1", "test2", "test3"]);
+    }
+
+    #[test]
+    fn convert_from_safearray_to_hashset() {
+        let v = vec![
+            U16String::from_str("test1"),
+            U16String::from_str("test2"),
+            U16String::from_str("test3"),
+        ];
+
+        let safe_array = v.into_iter().into_safearray().unwrap();
+
+        let parsed: HashSet<String> = HashSet::from_safearray(safe_array.as_ptr());
+
+        assert_eq!(parsed.len(), 3);
+        assert!(parsed.contains("test1"));
+        assert!(parsed.contains("test2"));
+        assert!(parsed.contains("test3"));
+    }
+}
