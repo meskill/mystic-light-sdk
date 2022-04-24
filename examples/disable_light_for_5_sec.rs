@@ -19,7 +19,7 @@ fn main() -> Result<(), CommonError> {
 
     println!("{:#?}", keyboard_leds);
 
-    let state = keyboard_leds[0].get_state()?.to_owned();
+    let state = keyboard_leds[0].get_state()?;
 
     println!("Current device state: {:#?}", state);
 
@@ -32,7 +32,7 @@ fn main() -> Result<(), CommonError> {
             blue: 0,
         },
         style: String::from("NoAnimation"),
-        ..state.clone()
+        ..state
     };
 
     keyboard_leds[0].set_state(&new_state)?;
