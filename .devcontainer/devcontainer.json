@@ -1,0 +1,60 @@
+{
+    "name": "${containerWorkspaceFolderBasename}",
+    "dockerFile": "Dockerfile",
+    "remoteEnv": {
+        "WSL_HOST_IP": "${localEnv:WSL_HOST_IP}",
+        "WSL_IP": "${localEnv:WSL_IP}"
+    },
+    "runArgs": [
+        "--env-file",
+        "${localWorkspaceFolder}/.env"
+    ],
+    "mounts": [
+        "type=bind,src=${localWorkspaceFolder}/.devcontainer/fish-history,dst=/home/rust/.local/share/fish",
+        "type=bind,src=${localEnv:HOME}/.blueprints,dst=/home/rust/.blueprints",
+        "type=bind,src=${localEnv:HOME}/.ssh,dst=/home/rust/.ssh,readonly",
+        "type=volume,src=rust-global-cache,dst=/usr/local/cargo/registry"
+    ],
+    // Add the IDs of extensions you want installed when the container is created.
+    "extensions": [
+        // common
+        "alefragnani.bookmarks",
+        "orepor.color-tabs-vscode-ext",
+        "rudijansenvanvuuren.blueprints",
+        "naumovs.color-highlight",
+        "EditorConfig.EditorConfig",
+        "vscode-snippet.Snippet",
+        // md
+        "yzhang.markdown-all-in-one",
+        "hediet.vscode-drawio",
+        // yaml
+        "redhat.vscode-yaml",
+        // string
+        "qcz.text-power-tools",
+        "britesnow.vscode-toggle-quotes",
+        // git
+        "eamodio.gitlens",
+        "mhutchie.git-graph",
+        "vivaxy.vscode-conventional-commits",
+        // spell checker
+        "streetsidesoftware.code-spell-checker",
+        "streetsidesoftware.code-spell-checker-russian",
+        // debug
+        "hediet.debug-visualizer",
+        // rust
+        "matklad.rust-analyzer",
+        "serayuzgur.crates",
+        "vadimcn.vscode-lldb",
+        "bungcip.better-toml"
+    ],
+    // Use 'forwardPorts' to make a list of ports inside the container available locally.
+    // "forwardPorts": [],
+    // Use 'postCreateCommand' to run commands after the container is created.
+    "postCreateCommand": "git config --global core.editor \"code --wait\" && sudo chown rust /usr/local/cargo/registry",
+    // Uncomment to connect as a non-root user. See https://aka.ms/vscode-remote/containers/non-root.
+    // "remoteUser": "node"
+    "containerEnv": {
+        "CONTAINER_PROJECT_HOME": "${containerWorkspaceFolder}",
+        "HOST_PROJECT_HOME": "${localWorkspaceFolder}"
+    }
+}
