@@ -1,0 +1,37 @@
+plugins:
+  - - '@semantic-release/commit-analyzer'
+    - preset: 'conventionalcommits'
+      releaseRules:
+        - { type: docs, release: patch }
+        - { type: build, release: patch }
+        - { type: chore, release: patch }
+        - { type: improvement, release: patch }
+        - { type: refactor, release: patch }
+        - { type: ci, release: false }
+        - { subject: "*\\[skip release\\]*", release: false }
+  - - '@semantic-release/release-notes-generator'
+    - preset: 'conventionalcommits'
+      presetConfig:
+        types:
+          - { type: docs, section: Documentation }
+          - { type: build, section: 'Build System' }
+          - { type: chore, section: Chores }
+          - { type: ci, section: 'Continuous Integration' }
+          - { type: feat, section: Features }
+          - { type: fix, section: 'Bug Fixes' }
+          - { type: improvement, section: Improvements }
+          - { type: perf, section: Performance }
+          - { type: refactor, section: 'Code Refactoring' }
+          - { type: revert, section: Reverts }
+          - { type: style, section: 'Code Style' }
+          - { type: test, section: Tests }
+          - { section: Other }
+  - '@semantic-release/github'
+  - '@semantic-release/changelog'
+  - - '@semantic-release/exec'
+    - generateNotesCmd: ./.github/scripts/prepare.sh ${nextRelease.version}
+  - - '@semantic-release/git'
+    - assets:
+        - CHANGELOG.md
+        - Cargo.toml
+        - README.md
