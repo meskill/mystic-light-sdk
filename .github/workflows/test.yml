@@ -1,0 +1,71 @@
+# yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
+
+name: test
+
+on:
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        toolchain: [stable]
+        target: [x86_64-pc-windows-gnu, x86_64-pc-windows-msvc, i686-pc-windows-gnu, i686-pc-windows-msvc]
+
+    runs-on: windows-2022
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Setup Rust toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: ${{ matrix.toolchain }}
+          target: ${{ matrix.target }}
+          components: rustfmt, clippy
+      - name: Rust cache
+        uses: Swatinem/rust-cache@v1
+        with:
+          sharedKey: build
+      - name: build
+        run: cargo build
+
+  lint:
+    runs-on: windows-2022
+    needs: build
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Setup Rust toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+      - name: Rust cache
+        uses: Swatinem/rust-cache@v1
+        with:
+          sharedKey: build
+      - name: Lint src
+        run: cargo clippy -- -D warnings
+      - name: Lint examples
+        run: cargo clippy --examples -- -D warnings
+
+  test:
+    runs-on: windows-2022
+    needs: build
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Setup Rust toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+      - name: Rust cache
+        uses: Swatinem/rust-cache@v1
+        with:
+          sharedKey: build
+      - name: Test
+        run: cargo test

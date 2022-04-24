@@ -9,7 +9,7 @@
 //!
 //! # Examples
 //!
-//! ```
+//! ```ignore
 //! use mystic_light_sdk::{Color, CommonError, DeviceLedState, MysticLightSDK};
 //! use std::thread;
 //! use std::time::Duration;
@@ -81,7 +81,7 @@
 //!
 //! You may use build script below in order to copy sdk files to the output dir. In this case dll files must reside in the `<path-to-your-project>/sdk` directory
 //!
-//! ```
+//! ```ignore
 //! use std::env;
 //! use std::path::Path;
 //!
