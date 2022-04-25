@@ -17,7 +17,7 @@ on:
 
 jobs:
   publish:
-    runs-on: windows-2022
+    runs-on: ubuntu-20.04
     steps:
       - name: Generate Token
         id: generate-token
@@ -34,6 +34,7 @@ jobs:
         with:
           profile: minimal
           toolchain: stable
+          target: x86_64-pc-windows-gnu
       - name: Rust cache
         uses: Swatinem/rust-cache@v1
         with:

@@ -26,6 +26,7 @@ jobs:
         with:
           profile: minimal
           toolchain: stable
+          target: x86_64-pc-windows-gnu
       - name: Rust cache
         uses: Swatinem/rust-cache@v1
         with:
@@ -46,5 +47,5 @@ jobs:
             @semantic-release/git
             @semantic-release/exec
             conventional-changelog-conventionalcommits
-      - name: Status
-        run: git status
+      - name: Test Publish
+        run: cargo package --target=x86_64-pc-windows-gnu

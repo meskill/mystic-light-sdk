@@ -29,5 +29,6 @@ plugins:
   - '@semantic-release/github'
   - '@semantic-release/changelog'
   - - '@semantic-release/exec'
-    - prepareCmd: ./.github/scripts/release.sh ${nextRelease.version}
+    - prepareCmd: ./.github/scripts/prepare.sh ${nextRelease.version}
+      publishCmd: ./.github/scripts/publish.sh
   - '@semantic-release/git'
