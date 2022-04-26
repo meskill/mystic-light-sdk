@@ -9,7 +9,7 @@ on:
 
 jobs:
   test-publish:
-    runs-on: ubuntu-20.04
+    runs-on: windows-2022
     steps:
       - name: Generate Token
         id: generate-token
@@ -26,14 +26,13 @@ jobs:
         with:
           profile: minimal
           toolchain: stable
-          target: x86_64-pc-windows-gnu
       - name: Rust cache
         uses: Swatinem/rust-cache@v1
         with:
           sharedKey: build
-      - name: Extract branch name
-        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
-        id: extract-branch
+      - name: Get branch name
+        id: branch-name
+        uses: tj-actions/branch-names@v5
       - name: Dry-Run Publish
         uses: cycjimmy/semantic-release-action@v3
         id: release
@@ -41,11 +40,11 @@ jobs:
           GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
         with:
           dry_run: true
-          branches: '["${{ steps.extract-branch.outputs.branch }}"]'
+          branches: '["${{ steps.branch-name.outputs.current_branch }}"]'
           extra_plugins: |
             @semantic-release/changelog
             @semantic-release/git
             @semantic-release/exec
             conventional-changelog-conventionalcommits
       - name: Test Publish
-        run: cargo package --target=x86_64-pc-windows-gnu --allow-dirty
+        run: cargo package --allow-dirty

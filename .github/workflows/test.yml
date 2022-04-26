@@ -21,10 +21,8 @@ jobs:
       - name: Setup Rust toolchain
         uses: actions-rs/toolchain@v1
         with:
-          profile: minimal
           toolchain: ${{ matrix.toolchain }}
           target: ${{ matrix.target }}
-          components: rustfmt, clippy
       - name: Rust cache
         uses: Swatinem/rust-cache@v1
         with:
@@ -41,7 +39,6 @@ jobs:
       - name: Setup Rust toolchain
         uses: actions-rs/toolchain@v1
         with:
-          profile: minimal
           toolchain: stable
       - name: Rust cache
         uses: Swatinem/rust-cache@v1
@@ -61,7 +58,6 @@ jobs:
       - name: Setup Rust toolchain
         uses: actions-rs/toolchain@v1
         with:
-          profile: minimal
           toolchain: stable
       - name: Rust cache
         uses: Swatinem/rust-cache@v1
