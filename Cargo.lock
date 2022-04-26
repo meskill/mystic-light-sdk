@@ -149,7 +149,7 @@ dependencies = [
 
 [[package]]
 name = "mystic_light_sdk"
-version = "0.1.0"
+version = "0.1.2"
 dependencies = [
  "copy_dir",
  "custom_error",
