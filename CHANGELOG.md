@@ -1,3 +1,10 @@
+### [0.1.5](https://github.com/meskill/mystic-light-sdk/compare/v0.1.4...v0.1.5) (2022-04-26)
+
+
+### Documentation
+
+* fix Cargo.toml ([f7d693e](https://github.com/meskill/mystic-light-sdk/commit/f7d693e2e1e0fa73113afca55a2536315fc44534))
+
 ### [0.1.4](https://github.com/meskill/mystic-light-sdk/compare/v0.1.3...v0.1.4) (2022-04-26)
 
 
