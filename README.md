@@ -128,3 +128,5 @@ Make sure you have been fulfilled [requirements](#requirements) and you running 
 
 Some of the device's styles do not support colors. In this case this kind of error will be generated.
 
+
+License: Apache-2.0

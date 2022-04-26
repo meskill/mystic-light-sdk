@@ -1,3 +1,10 @@
+### [0.1.4](https://github.com/meskill/mystic-light-sdk/compare/v0.1.3...v0.1.4) (2022-04-26)
+
+
+### Documentation
+
+* fix license ([71eb2b1](https://github.com/meskill/mystic-light-sdk/commit/71eb2b1885f46ef8b460cf7f4cceff1f4fa324a5))
+
 ### [0.1.3](https://github.com/meskill/mystic-light-sdk/compare/v0.1.2...v0.1.3) (2022-04-26)
 
 
