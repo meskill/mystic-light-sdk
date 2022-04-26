@@ -7,10 +7,9 @@ description = "A Rust wrapper for the MysticLight SDK (MSI hardware and peripher
 homepage = "https://github.com/meskill/mystic-light-sdk"
 repository = "https://github.com/meskill/mystic-light-sdk"
 licence = "Apache-2.0"
-license-file = "LICENSE.txt"
 keywords = ["mystic-light", "sdk", "rgb", "rgb-led"]
 categories = ["api-bindings"]
-include = ["/src/**", "README.md"]
+include = ["/src/**", "README.md", "CHANGELOG.md"]
 
 [badges]
 maintenance = { status = "passively-maintained" }
