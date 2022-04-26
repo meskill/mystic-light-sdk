@@ -1,3 +1,17 @@
+### [0.1.2](https://github.com/meskill/mystic-light-sdk/compare/v0.1.1...v0.1.2) (2022-04-26)
+
+
+### Documentation
+
+* update Cargo.toml ([a1f1344](https://github.com/meskill/mystic-light-sdk/commit/a1f13448d4eb71b48e226c0f61d9b67b33de507a))
+
+
+### Continuous Integration
+
+* fix publish ([43e64c9](https://github.com/meskill/mystic-light-sdk/commit/43e64c938e4cad1abfd9078919351f50323103b0))
+* github workflow cleanup ([5e9d8f4](https://github.com/meskill/mystic-light-sdk/commit/5e9d8f4fa97d05ebe0a32a3b20c09a6335bae40d))
+* run publish only on release ([7de2d94](https://github.com/meskill/mystic-light-sdk/commit/7de2d94f4878777f7bc3b5352a3fd7890736a408))
+
 ### [0.1.1](https://github.com/meskill/mystic-light-sdk/compare/v0.1.0...v0.1.1) (2022-04-26)
 
 
