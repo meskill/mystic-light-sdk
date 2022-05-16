@@ -1,7 +1,14 @@
 #! /usr/bin/env fish
 
+echo "Run any cargo command"
+
 while true
-  set -l command  (cat .devcontainer/command-pipe)
+  set path (cat .devcontainer/command-pipe)
+
+  kill %1
   reset
-  eval $command
+
+  set previous_path $path
+
+  eval "$path &"
 end
