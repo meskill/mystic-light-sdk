@@ -41,8 +41,8 @@ For this either use Remote Containers extension with the provided `.devcontainer
 2. Mount existing named pipe and scripts to the docker container `type=bind,src=${localWorkspaceFolder}/.devcontainer,dst=${containerWorkspaceFolder}/.devcontainer`
 3. Specify environment variables for container `CONTAINER_PROJECT_HOME` - path to the project inside the container, `HOST_PROJECT_HOME` - path to projects in WSL
 4. Run the container
-5. You can use `wsl2-docker.env` in order fill needed environment variable that will wrap execution for the program run
-6. Inside WSL start script `.devcontainer/execute.fish` that will listen for new commands and execute it
+5. You can use `wsl2-docker.env` in order to fill needed environment variable that will wrap execution for the program run
+6. Start new WSL terminal with admin right and execute script `.devcontainer/execute.fish` that will listen for new commands and execute it
 7. Run `cargo test`
 8. Execution will end without any info, but you should see test running output in the WSL terminal
 
