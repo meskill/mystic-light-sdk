@@ -22,6 +22,10 @@ impl Debug for Device {
 }
 
 impl Device {
+    pub fn name(&self) -> &str {
+        &self.name
+    }
+
     pub fn new(library: Rc<Library>, name: String, led_count: u32) -> Self {
         Self {
             library,
