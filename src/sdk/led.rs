@@ -32,9 +32,13 @@ pub struct DeviceLedState {
 /// Represents single led of the device
 pub struct DeviceLed {
     library: Rc<Library>,
+
+    // internal field that required to make api calls
     device_name: Bstr,
     led_index: u32,
-    name: Bstr,
+
+    // public fields
+    name: String,
     supported_styles: HashSet<String>,
     max_bright: u32,
     max_speed: u32,
@@ -43,7 +47,7 @@ pub struct DeviceLed {
 impl Debug for DeviceLed {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.debug_struct("DeviceLed")
-            .field("name", &self.name.to_string())
+            .field("name", &self.name)
             .field("supported_styles", &self.supported_styles)
             .field("max_bright", &self.max_bright)
             .field("max_speed", &self.max_speed)
@@ -52,6 +56,22 @@ impl Debug for DeviceLed {
 }
 
 impl DeviceLed {
+    pub fn name(&self) -> &str {
+        &self.name
+    }
+
+    pub fn supported_styles(&self) -> &HashSet<String> {
+        &self.supported_styles
+    }
+
+    pub fn max_bright(&self) -> u32 {
+        self.max_bright
+    }
+
+    pub fn max_speed(&self) -> u32 {
+        self.max_speed
+    }
+
     pub fn new(library: Rc<Library>, device_name: &str, led_index: u32) -> Result<Self> {
         let get_led_info: Symbol<
             unsafe extern "C" fn(
@@ -111,7 +131,7 @@ impl DeviceLed {
 
         let supported_styles = HashSet::from_safearray(led_styles);
 
-        let name = Bstr::from(led_name);
+        let name = Bstr::from(led_name).to_string();
 
         Ok(Self {
             library,

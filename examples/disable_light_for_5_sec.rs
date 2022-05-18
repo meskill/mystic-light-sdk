@@ -17,7 +17,16 @@ fn main() -> Result<(), CommonError> {
 
     let mut keyboard_leds = devices[2].leds()?;
 
+    println!("Second Device name is {}", devices[2].name());
+
     println!("{:#?}", keyboard_leds);
+
+    println!(
+        "First led has name: {} with max_bright: {} and max_speed: {}",
+        keyboard_leds[0].name(),
+        keyboard_leds[0].max_bright(),
+        keyboard_leds[0].max_speed()
+    );
 
     let state = keyboard_leds[0].get_state()?;
 
