@@ -1,3 +1,27 @@
+## [0.2.0](https://github.com/meskill/mystic-light-sdk/compare/v0.1.5...v0.2.0) (2022-05-22)
+
+
+### Features
+
+* add getters for some field for device and led ([4a30763](https://github.com/meskill/mystic-light-sdk/commit/4a3076312bf8716b7bf5a781585b091f9958aaa4))
+* add serde feature implementation to able to serialize/deserialize ([bdb7f09](https://github.com/meskill/mystic-light-sdk/commit/bdb7f091e5110177df3d8af8c6b99af67023e67e))
+
+
+### Continuous Integration
+
+* use locked lock file ([6cd535d](https://github.com/meskill/mystic-light-sdk/commit/6cd535d4bff1079c9d441805c1129fc6aa11db69))
+
+
+### Code Refactoring
+
+* replace CommoError generation with custom_error! macro ([b5c6762](https://github.com/meskill/mystic-light-sdk/commit/b5c6762507dd0163303d9b8ff7dd3f92ce223eed))
+
+
+### Build System
+
+* fix build for docs.rs ([b7073d2](https://github.com/meskill/mystic-light-sdk/commit/b7073d2906e5c21a8d21b0cd5689e91756f19427))
+* update wsl+docker execution scripts ([ccb1c15](https://github.com/meskill/mystic-light-sdk/commit/ccb1c151fb1e8f29deaba5dd2b8d8a68c86f29ae))
+
 ### [0.1.5](https://github.com/meskill/mystic-light-sdk/compare/v0.1.4...v0.1.5) (2022-04-26)
 
 
