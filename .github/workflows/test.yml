@@ -64,4 +64,4 @@ jobs:
         with:
           sharedKey: build
       - name: Test
-        run: cargo test
+        run: cargo test --all-features
