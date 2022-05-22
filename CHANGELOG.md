@@ -1,3 +1,22 @@
+### [0.2.1](https://github.com/meskill/mystic-light-sdk/compare/v0.2.0...v0.2.1) (2022-05-22)
+
+
+### Documentation
+
+* inline example to lib docs ([862c04d](https://github.com/meskill/mystic-light-sdk/commit/862c04d45dbe3632b2708203c62797c350ca949c))
+
+
+### Build System
+
+* add env usage to build script ([0137cfb](https://github.com/meskill/mystic-light-sdk/commit/0137cfb21665bc929987ca58b403532fdd5e0e89))
+
+
+### Continuous Integration
+
+* fix publish ([dc2d883](https://github.com/meskill/mystic-light-sdk/commit/dc2d883ca2f5ec965aa9ad4a92b3f17fd8b8d110))
+* fixup changes to lock file after publish ([4b03592](https://github.com/meskill/mystic-light-sdk/commit/4b035924d0a434d2759d5c4fbd44fec8cb88a4e7))
+* run tests with all features ([ea9bc64](https://github.com/meskill/mystic-light-sdk/commit/ea9bc64baf946c71afa63bb1295d283e7772253b))
+
 ## [0.2.0](https://github.com/meskill/mystic-light-sdk/compare/v0.1.5...v0.2.0) (2022-05-22)
 
 
