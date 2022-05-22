@@ -114,6 +114,12 @@
 //!
 //! - in case of any problems with conversion from and into WinApi types
 //!
+//! # Features
+//!
+//! ## serde
+//!
+//! Enables [serde](https://crates.io/crates/serde) serialization/deserialization for some of the sdk structs
+//!
 //! # Troubleshooting
 //!
 //! ## Timeout error on initialization

@@ -15,9 +15,9 @@ fn main() -> Result<(), CommonError> {
 
     println!("{:#?}", devices);
 
-    let mut keyboard_leds = devices[2].leds()?;
-
     println!("Second Device name is {}", devices[2].name());
+
+    let mut keyboard_leds = devices[2].leds()?;
 
     println!("{:#?}", keyboard_leds);
 

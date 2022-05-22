@@ -6,9 +6,13 @@ use super::types::Result;
 use libloading::Library;
 
 /// Represents single hardware MysticLight Device
+#[cfg_attr(feature="serde", derive(serde::Serialize))]
 pub struct Device {
-    library: Rc<Library>,
     name: String,
+
+    #[cfg_attr(feature="serde", serde(skip))]
+    library: Rc<Library>,
+    #[cfg_attr(feature="serde", serde(skip))]
     led_count: u32,
 }
 
