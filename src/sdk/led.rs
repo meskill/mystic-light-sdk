@@ -240,12 +240,12 @@ impl DeviceLed {
         >;
 
         if !self.supported_styles.contains(style) {
+            let mut iter = self.supported_styles.iter();
+            let first = iter.next().unwrap().to_string();
+
             return Err(UsageError::NotSupportedStyle {
                 style: style.to_string(),
-                supported_styles: self
-                    .supported_styles
-                    .iter()
-                    .fold(String::new(), |acc, s| format!("{}, {}", acc, s)),
+                supported_styles: iter.fold(first, |acc, s| format!("{}, {}", acc, s)),
             }
             .into());
         }
@@ -365,7 +365,9 @@ impl DeviceLed {
         self.set_style(&state.style)?;
         match self.set_color(&state.color) {
             Ok(_) => (),
-            Err(CommonError::SdkError(MysticLightSDKError::NotSupported)) => (),
+            Err(CommonError::SdkError {
+                source: MysticLightSDKError::NotSupported,
+            }) => (),
             error => return error,
         };
         self.set_bright(state.bright)?;
