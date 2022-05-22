@@ -28,7 +28,7 @@ jobs:
         with:
           sharedKey: build
       - name: build
-        run: cargo build
+        run: cargo --locked build
 
   lint:
     runs-on: windows-2022
