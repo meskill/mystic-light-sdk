@@ -33,11 +33,8 @@
 //!
 //! As sdk dll is required in runtime you must provide these files somehow in the runtime.
 //!
-//! You may use build script below in order to copy sdk files to the output dir. In this case dll files must reside in the `<path-to-your-project>/sdk` directory
-//!
-//! ```
-#![doc = include_str!("../build.rs")]
-//! ```
+//! You may use build script included in the library itself to copy directory with sdk to the output directory. To do so provide environment variable `MYSTIC_LIGHT_SDK_PATH`
+//! with the path to directory with the sdk's dll relative to current working directory.
 //!
 //! # Panics
 //!
