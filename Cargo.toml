@@ -14,6 +14,9 @@ include = ["/src/**", "/examples/**", "README.md", "CHANGELOG.md"]
 [badges]
 maintenance = { status = "passively-maintained" }
 
+[package.metadata.docs.rs]
+default-target = "x86_64-pc-windows-gnu"
+
 [dependencies]
 custom_error = "1.9.2"
 libloading = "0.7.3"
