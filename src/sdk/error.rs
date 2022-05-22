@@ -23,28 +23,10 @@ pub UsageError
     NotSupportedStyle{style: String, supported_styles: String} = "{style} is not in the supported style list: {supported_styles}"
 }
 
-/// CommonError that may happen during usage of this library
-#[derive(Debug)]
-pub enum CommonError {
-    SdkError(MysticLightSDKError),
-    LibraryError(LibLoadingError),
-    UsageError(UsageError),
-}
-
-impl From<MysticLightSDKError> for CommonError {
-    fn from(error: MysticLightSDKError) -> Self {
-        CommonError::SdkError(error)
-    }
-}
-
-impl From<LibLoadingError> for CommonError {
-    fn from(error: LibLoadingError) -> Self {
-        CommonError::LibraryError(error)
-    }
-}
-
-impl From<UsageError> for CommonError {
-    fn from(error: UsageError) -> Self {
-        CommonError::UsageError(error)
-    }
+custom_error! {
+    /// CommonError that may happen during usage of this library
+pub CommonError
+    SdkError{source: MysticLightSDKError} = "SdkError({source})",
+    LibraryError{source: LibLoadingError} = "LibraryError({source})",
+    UsageError{source: UsageError} = "UsageError({source})",
 }
