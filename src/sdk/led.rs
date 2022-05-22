@@ -18,6 +18,7 @@ use super::{CommonError, LedStyles, MysticLightSDKError};
 
 /// Represents state of the single led
 #[derive(Debug, Clone, PartialEq, Eq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct DeviceLedState {
     /// current style of the led
     pub style: String,
@@ -30,18 +31,21 @@ pub struct DeviceLedState {
 }
 
 /// Represents single led of the device
+#[cfg_attr(feature = "serde", derive(serde::Serialize))]
 pub struct DeviceLed {
-    library: Rc<Library>,
-
-    // internal field that required to make api calls
-    device_name: Bstr,
-    led_index: u32,
-
     // public fields
     name: String,
     supported_styles: HashSet<String>,
     max_bright: u32,
     max_speed: u32,
+
+    // internal field that required to make api calls
+    #[cfg_attr(feature = "serde", serde(skip))]
+    library: Rc<Library>,
+    #[cfg_attr(feature = "serde", serde(skip))]
+    device_name: Bstr,
+    #[cfg_attr(feature = "serde", serde(skip))]
+    led_index: u32,
 }
 
 impl Debug for DeviceLed {
@@ -374,5 +378,35 @@ impl DeviceLed {
         self.set_speed(state.speed)?;
 
         Ok(())
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    #[test]
+    #[cfg(feature = "serde")]
+    fn device_led_state_serialize_deserialize() {
+        use super::DeviceLedState;
+        use crate::Color;
+
+        let device_led_state = DeviceLedState {
+            bright: 10,
+            speed: 5,
+            color: Color {
+                red: 10,
+                green: 50,
+                blue: 100,
+            },
+            style: String::from("led_style"),
+        };
+
+        let serialized_string = serde_json::to_string(&device_led_state).unwrap();
+
+        assert_eq!(serialized_string, "{\"style\":\"led_style\",\"color\":{\"red\":10,\"green\":50,\"blue\":100},\"bright\":10,\"speed\":5}");
+
+        assert_eq!(
+            serde_json::from_str::<DeviceLedState>(&serialized_string).unwrap(),
+            device_led_state
+        );
     }
 }
