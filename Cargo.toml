@@ -9,7 +9,7 @@ repository = "https://github.com/meskill/mystic-light-sdk"
 license = "Apache-2.0"
 keywords = ["mystic-light", "sdk", "rgb", "rgb-led"]
 categories = ["api-bindings"]
-include = ["/src/**", "/examples/**", "README.md", "CHANGELOG.md"]
+include = ["/src/**", "/examples/**", "build.rs", "README.md", "CHANGELOG.md"]
 
 [badges]
 maintenance = { status = "passively-maintained" }
