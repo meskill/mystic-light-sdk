@@ -1,3 +1,10 @@
+### [0.2.2](https://github.com/meskill/mystic-light-sdk/compare/v0.2.1...v0.2.2) (2022-05-23)
+
+
+### Documentation
+
+* fix README.md ([36870f8](https://github.com/meskill/mystic-light-sdk/commit/36870f89e57f2cae329e0fbc7bebfe3c38858b7a))
+
 ### [0.2.1](https://github.com/meskill/mystic-light-sdk/compare/v0.2.0...v0.2.1) (2022-05-22)
 
 

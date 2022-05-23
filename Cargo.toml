@@ -1,6 +1,6 @@
 [package]
 name = "mystic_light_sdk"
-version = "0.2.1"
+version = "0.2.2"
 edition = "2021"
 authors = ["meskill"]
 description = "A Rust wrapper for the MysticLight SDK (MSI hardware and peripherals)"
