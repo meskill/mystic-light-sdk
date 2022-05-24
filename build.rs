@@ -2,12 +2,13 @@ use std::env;
 use std::path::Path;
 
 fn main() -> std::io::Result<()> {
-    println!("cargo:rerun-if-changed=sdk");
     println!("cargo:rerun-if-env-changed=MYSTIC_LIGHT_SDK_PATH");
 
     let sdk_path_env = env::var("MYSTIC_LIGHT_SDK_PATH");
 
     if let Ok(sdk_path) = sdk_path_env {
+        println!("cargo:rerun-if-changed={}", sdk_path);
+
         let current_dir = env::current_dir()?;
         let out_dir = env::var("OUT_DIR").unwrap();
 
