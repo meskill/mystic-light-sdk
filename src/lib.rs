@@ -34,7 +34,7 @@
 //! As sdk dll is required in runtime you must provide these files somehow in the runtime.
 //!
 //! You may use build script included in the library itself to copy directory with sdk to the output directory. To do so provide environment variable `MYSTIC_LIGHT_SDK_PATH`
-//! with the path to directory with the sdk's dll relative to current working directory.
+//! with the path to directory with the sdk's dll relative to the crate root e.g. `MYSTIC_LIGHT_SDK_PATH=sdk` if you have dlls inside `<crate_root>/sdk` directory
 //!
 //! # Panics
 //!
