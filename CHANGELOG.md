@@ -1,3 +1,10 @@
+### [0.2.3](https://github.com/meskill/mystic-light-sdk/compare/v0.2.2...v0.2.3) (2022-05-25)
+
+
+### Bug Fixes
+
+* build script change detection for path ([906eada](https://github.com/meskill/mystic-light-sdk/commit/906eadab58fb4ef8a6b4a7f8e492a6c3cc845ef8))
+
 ### [0.2.2](https://github.com/meskill/mystic-light-sdk/compare/v0.2.1...v0.2.2) (2022-05-23)
 
 
