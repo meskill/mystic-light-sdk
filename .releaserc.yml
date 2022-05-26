@@ -29,7 +29,8 @@ plugins:
   - '@semantic-release/github'
   - '@semantic-release/changelog'
   - - '@semantic-release/exec'
-    - prepareCmd: ./.github/scripts/prepare.sh ${nextRelease.version}
+    - generateNotesCmd: ./.github/scripts/generate-readme.sh
+      prepareCmd: ./.github/scripts/set-version.sh ${nextRelease.version}
   - - '@semantic-release/git'
     - assets:
         - CHANGELOG.md
