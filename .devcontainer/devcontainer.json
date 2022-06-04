@@ -50,7 +50,7 @@
     // Use 'forwardPorts' to make a list of ports inside the container available locally.
     // "forwardPorts": [],
     // Use 'postCreateCommand' to run commands after the container is created.
-    "postCreateCommand": "git config --global core.editor \"code --wait\" && sudo chown rust /usr/local/cargo/registry",
+    "postCreateCommand": "sudo chown rust /usr/local/cargo/registry",
     // Uncomment to connect as a non-root user. See https://aka.ms/vscode-remote/containers/non-root.
     // "remoteUser": "node"
     "containerEnv": {
