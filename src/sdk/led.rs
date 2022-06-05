@@ -76,7 +76,7 @@ impl DeviceLed {
         self.max_speed
     }
 
-    pub fn new(library: Rc<Library>, device_name: &str, led_index: u32) -> Result<Self> {
+    pub(crate) fn new(library: Rc<Library>, device_name: &str, led_index: u32) -> Result<Self> {
         let get_led_info: Symbol<
             unsafe extern "C" fn(
                 device_name: DeviceName,

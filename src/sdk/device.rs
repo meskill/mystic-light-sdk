@@ -30,7 +30,7 @@ impl Device {
         &self.name
     }
 
-    pub fn new(library: Rc<Library>, name: String, led_count: u32) -> Self {
+    pub(crate) fn new(library: Rc<Library>, name: String, led_count: u32) -> Self {
         Self {
             library,
             name,
