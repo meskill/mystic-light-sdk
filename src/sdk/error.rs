@@ -1,3 +1,5 @@
+use std::sync::PoisonError;
+
 use libloading::Error as LibLoadingError;
 
 use custom_error::custom_error;
@@ -27,10 +29,32 @@ custom_error! {
 }
 
 custom_error! {
+  /// Errors with multithreading
+  #[non_exhaustive]
+  pub SyncError
+    Poison = "Shared object (Mutex or RwLock) is poisoned"
+}
+
+impl<T> From<PoisonError<T>> for SyncError {
+    fn from(_: PoisonError<T>) -> Self {
+        Self::Poison
+    }
+}
+
+custom_error! {
   /// CommonError that may happen during usage of this library
   #[non_exhaustive]
-pub CommonError
-    SdkError{source: MysticLightSDKError} = "SdkError({source})",
-    LibraryError{source: LibLoadingError} = "LibraryError({source})",
-    UsageError{source: UsageError} = "UsageError({source})",
+  pub CommonError
+      SdkError{source: MysticLightSDKError} = "SdkError({source})",
+      LibraryError{source: LibLoadingError} = "LibraryError({source})",
+      UsageError{source: UsageError} = "UsageError({source})",
+      SyncError{source: SyncError} = "SyncError({source})",
+}
+
+impl<T> From<PoisonError<T>> for CommonError {
+    fn from(error: PoisonError<T>) -> Self {
+        Self::SyncError {
+            source: error.into(),
+        }
+    }
 }

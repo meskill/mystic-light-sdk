@@ -6,13 +6,13 @@ use super::types::Result;
 use libloading::Library;
 
 /// Represents single hardware MysticLight Device
-#[cfg_attr(feature="serde", derive(serde::Serialize))]
+#[cfg_attr(feature = "serde", derive(serde::Serialize))]
 pub struct Device {
     name: String,
 
-    #[cfg_attr(feature="serde", serde(skip))]
-    library: Rc<Library>,
-    #[cfg_attr(feature="serde", serde(skip))]
+    #[cfg_attr(feature = "serde", serde(skip))]
+    library: Arc<Mutex<Library>>,
+    #[cfg_attr(feature = "serde", serde(skip))]
     led_count: u32,
 }
 
@@ -30,7 +30,7 @@ impl Device {
         &self.name
     }
 
-    pub(crate) fn new(library: Rc<Library>, name: String, led_count: u32) -> Self {
+    pub(crate) fn new(library: Arc<Mutex<Library>>, name: String, led_count: u32) -> Self {
         Self {
             library,
             name,
@@ -42,7 +42,7 @@ impl Device {
     pub fn leds(&self) -> Result<Vec<DeviceLed>> {
         let leds = (0..self.led_count)
             .into_iter()
-            .map(|led_index| DeviceLed::new(Rc::clone(&self.library), &self.name, led_index))
+            .map(|led_index| DeviceLed::new(Arc::clone(&self.library), &self.name, led_index))
             .collect::<Result<Vec<_>>>()?;
 
         Ok(leds)

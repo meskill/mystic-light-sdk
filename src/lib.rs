@@ -40,6 +40,15 @@
 //!
 //! - in case of any problems with conversion from and into WinApi types
 //!
+//! # How does it work
+//!
+//! ## Parallelism
+//!
+//! Underlying C++ SDK doesn't support parallel access and trying to use sdk that way will lead to wrong data. To prevent such problems this wrapper wraps underlying library in Arc and Mutex.
+//! Arc is used to share the same library instance across wrapper structs. Mutex is used to prevent parallel access to the underlying library.
+//!
+//! That all means you can safely use rust wrapper both in single-threaded and multi-threaded environments, but actual sdk calls will be executed in sequence anyway.
+//!
 //! # Features
 //!
 //! ## serde
