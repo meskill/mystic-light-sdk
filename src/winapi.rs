@@ -61,6 +61,9 @@ impl From<&str> for Bstr {
     }
 }
 
+unsafe impl Send for Bstr {}
+unsafe impl Sync for Bstr {}
+
 impl From<&Bstr> for BSTR {
     fn from(bstr: &Bstr) -> Self {
         bstr.bstr.as_ptr()

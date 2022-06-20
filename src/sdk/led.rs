@@ -1,7 +1,7 @@
 use std::collections::HashSet;
 use std::fmt::Debug;
 use std::ptr::null_mut;
-use std::rc::Rc;
+use std::sync::{Arc, Mutex};
 
 use libloading::{Library, Symbol};
 
@@ -41,9 +41,11 @@ pub struct DeviceLed {
 
     // internal field that required to make api calls
     #[cfg_attr(feature = "serde", serde(skip))]
-    library: Rc<Library>,
+    library: Arc<Mutex<Library>>,
+
     #[cfg_attr(feature = "serde", serde(skip))]
     device_name: Bstr,
+
     #[cfg_attr(feature = "serde", serde(skip))]
     led_index: u32,
 }
@@ -76,7 +78,11 @@ impl DeviceLed {
         self.max_speed
     }
 
-    pub(crate) fn new(library: Rc<Library>, device_name: &str, led_index: u32) -> Result<Self> {
+    pub(crate) fn new(
+        library: Arc<Mutex<Library>>,
+        device_name: &str,
+        led_index: u32,
+    ) -> Result<Self> {
         let get_led_info: Symbol<
             unsafe extern "C" fn(
                 device_name: DeviceName,
@@ -100,10 +106,12 @@ impl DeviceLed {
             ) -> MysticLightSdkResult,
         >;
 
+        let library_instance = library.lock()?;
+
         unsafe {
-            get_led_info = library.get(b"MLAPI_GetLedInfo")?;
-            get_led_max_bright = library.get(b"MLAPI_GetLedMaxBright")?;
-            get_led_max_speed = library.get(b"MLAPI_GetLedMaxSpeed")?;
+            get_led_info = library_instance.get(b"MLAPI_GetLedInfo")?;
+            get_led_max_bright = library_instance.get(b"MLAPI_GetLedMaxBright")?;
+            get_led_max_speed = library_instance.get(b"MLAPI_GetLedMaxSpeed")?;
         }
 
         let device_name = Bstr::from(device_name);
@@ -136,6 +144,8 @@ impl DeviceLed {
         let supported_styles = HashSet::from_safearray(led_styles);
 
         let name = Bstr::from(led_name).to_string();
+
+        drop(library_instance);
 
         Ok(Self {
             library,
@@ -181,11 +191,13 @@ impl DeviceLed {
             ) -> MysticLightSdkResult,
         >;
 
+        let library = self.library.lock()?;
+
         unsafe {
-            get_led_style = self.library.get(b"MLAPI_GetLedStyle")?;
-            get_led_color = self.library.get(b"MLAPI_GetLedColor")?;
-            get_led_speed = self.library.get(b"MLAPI_GetLedSpeed")?;
-            get_led_bright = self.library.get(b"MLAPI_GetLedBright")?;
+            get_led_style = library.get(b"MLAPI_GetLedStyle")?;
+            get_led_color = library.get(b"MLAPI_GetLedColor")?;
+            get_led_speed = library.get(b"MLAPI_GetLedSpeed")?;
+            get_led_bright = library.get(b"MLAPI_GetLedBright")?;
         }
 
         let mut style: LedStyle = null_mut();
@@ -255,7 +267,9 @@ impl DeviceLed {
         }
 
         unsafe {
-            set_led_style = self.library.get(b"MLAPI_SetLedStyle")?;
+            let library = self.library.lock()?;
+
+            set_led_style = library.get(b"MLAPI_SetLedStyle")?;
 
             let style: Bstr = style.into();
 
@@ -287,7 +301,9 @@ impl DeviceLed {
         >;
 
         unsafe {
-            set_led_color = self.library.get(b"MLAPI_SetLedColor")?;
+            let library = self.library.lock()?;
+
+            set_led_color = library.get(b"MLAPI_SetLedColor")?;
 
             let &Color { red, green, blue } = color;
 
@@ -319,7 +335,9 @@ impl DeviceLed {
         >;
 
         unsafe {
-            set_led_bright = self.library.get(b"MLAPI_SetLedBright")?;
+            let library = self.library.lock()?;
+
+            set_led_bright = library.get(b"MLAPI_SetLedBright")?;
 
             MysticLightSDK::parse_result(set_led_bright(
                 self.device_name.as_ptr(),
@@ -347,7 +365,9 @@ impl DeviceLed {
         >;
 
         unsafe {
-            set_led_speed = self.library.get(b"MLAPI_SetLedSpeed")?;
+            let library = self.library.lock()?;
+
+            set_led_speed = library.get(b"MLAPI_SetLedSpeed")?;
 
             MysticLightSDK::parse_result(set_led_speed(
                 self.device_name.as_ptr(),

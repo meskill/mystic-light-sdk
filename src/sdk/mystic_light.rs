@@ -1,4 +1,7 @@
-use std::{ptr::null_mut, rc::Rc};
+use std::{
+    ptr::null_mut,
+    sync::{Arc, Mutex},
+};
 
 use libloading::{Library, Symbol};
 
@@ -45,7 +48,7 @@ impl MysticLightSDK {
         }
 
         Ok(MysticLightSDK {
-            library: Rc::new(library),
+            library: Arc::new(Mutex::new(library)),
         })
     }
 
@@ -58,12 +61,14 @@ impl MysticLightSDK {
         let led_count_ptr: *mut LedCounts = &mut led_count;
 
         unsafe {
+            let library = self.library.lock()?;
+
             let api_get_info: Symbol<
                 unsafe extern "C" fn(
                     dev_type: *mut DeviceTypes,
                     led_count: *mut LedCounts,
                 ) -> MysticLightSdkResult,
-            > = self.library.get(b"MLAPI_GetDeviceInfo")?;
+            > = library.get(b"MLAPI_GetDeviceInfo")?;
 
             MysticLightSDK::parse_result(api_get_info(dev_type_ptr, led_count_ptr))?
         }
@@ -77,7 +82,7 @@ impl MysticLightSDK {
             .map(|(device_name, led_count)| {
                 let led_count: u32 = led_count.parse().expect("Cannot parse led count str");
 
-                Device::new(Rc::clone(&self.library), device_name, led_count)
+                Device::new(Arc::clone(&self.library), device_name, led_count)
             })
             .collect())
     }
