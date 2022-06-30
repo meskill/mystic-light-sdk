@@ -16,8 +16,11 @@ maintenance = { status = "passively-maintained" }
 
 [package.metadata.docs.rs]
 default-target = "x86_64-pc-windows-gnu"
+all-features = true
+rustdoc-args = ["--cfg", "docsrs"]
 
 [dependencies]
+async-graphql = { version="4.0.1", optional=true }
 custom_error = "1.9.2"
 libloading = "0.7.3"
 oaidl = "0.2.1"
@@ -33,6 +36,7 @@ copy_dir = "0.1.2"
 
 [features]
 serde = ["dep:serde"]
+async-graphql = ["dep:async-graphql"]
 
 [[example]]
 name = "serde_serialization"

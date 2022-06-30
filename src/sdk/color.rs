@@ -3,6 +3,11 @@ pub type SingleColor = u32;
 /// Represent RGB color
 #[derive(Debug, Clone, PartialEq, Eq)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+#[cfg_attr(
+    feature = "async-graphql",
+    derive(async_graphql::SimpleObject, async_graphql::InputObject),
+    graphql(input_name = "ColorInput")
+)]
 pub struct Color {
     pub red: SingleColor,
     pub green: SingleColor,
