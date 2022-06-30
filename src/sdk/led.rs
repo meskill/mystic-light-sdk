@@ -2,6 +2,8 @@ use std::collections::HashSet;
 use std::fmt::Debug;
 use std::ptr::null_mut;
 use std::sync::{Arc, Mutex};
+use std::thread;
+use std::time::Duration;
 
 use libloading::{Library, Symbol};
 
@@ -19,6 +21,7 @@ use super::{CommonError, LedStyles, MysticLightSDKError};
 /// Represents state of the single led
 #[derive(Debug, Clone, PartialEq, Eq)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+#[cfg_attr(feature = "async-graphql", derive(async_graphql::SimpleObject))]
 pub struct DeviceLedState {
     /// current style of the led
     pub style: String,
@@ -28,6 +31,46 @@ pub struct DeviceLedState {
     pub bright: u32,
     /// current speed of the led (some of the styles do not support this, so there will be fake data in this case)
     pub speed: u32,
+}
+
+/// Represents state of the single led
+#[cfg(feature = "async-graphql")]
+#[cfg_attr(feature = "async-graphql", derive(async_graphql::InputObject))]
+#[cfg_attr(docsrs, doc(cfg(feature = "async-graphql")))]
+pub struct DeviceLedStateInput {
+    /// current style of the led
+    pub style: Option<String>,
+    /// current color of the led (some of the styles do not support this, so there will be fake data in this case)
+    pub color: Option<Color>,
+    /// current brightness of the led (some of the styles do not support this, so there will be fake data in this case)
+    pub bright: Option<u32>,
+    /// current speed of the led (some of the styles do not support this, so there will be fake data in this case)
+    pub speed: Option<u32>,
+}
+
+#[cfg(feature = "async-graphql")]
+impl DeviceLedStateInput {
+    pub fn merge_with_state(self, current_state: DeviceLedState) -> DeviceLedState {
+        let mut state = DeviceLedState { ..current_state };
+
+        if let Some(style) = self.style {
+            state.style = style;
+        }
+
+        if let Some(color) = self.color {
+            state.color = color;
+        }
+
+        if let Some(bright) = self.bright {
+            state.bright = bright;
+        }
+
+        if let Some(speed) = self.speed {
+            state.speed = speed;
+        }
+
+        state
+    }
 }
 
 /// Represents single led of the device
@@ -48,6 +91,64 @@ pub struct DeviceLed {
 
     #[cfg_attr(feature = "serde", serde(skip))]
     led_index: u32,
+}
+
+/// Represents single led of the device
+#[cfg(feature = "async-graphql")]
+#[async_graphql::Object]
+impl DeviceLed {
+    #[graphql(name = "name")]
+    async fn async_graphql_name(&self) -> &str {
+        self.name()
+    }
+
+    #[graphql(name = "supportedStyles")]
+    async fn async_graphql_supported_styles(&self) -> &HashSet<String> {
+        self.supported_styles()
+    }
+
+    #[graphql(name = "maxBright")]
+    async fn async_graphql_max_bright(&self) -> u32 {
+        self.max_bright()
+    }
+
+    #[graphql(name = "maxSpeed")]
+    async fn async_graphql_max_speed(&self) -> u32 {
+        self.max_speed()
+    }
+
+    #[graphql(name = "state")]
+    async fn async_graphql_get_state(&self) -> Result<DeviceLedState> {
+        self.get_state()
+    }
+}
+
+/// Mutation wrapper for a device led
+#[cfg(feature = "async-graphql")]
+#[cfg_attr(docsrs, doc(cfg(feature = "async-graphql")))]
+pub struct DeviceLedMutation(Mutex<DeviceLed>);
+
+#[cfg(feature = "async-graphql")]
+impl DeviceLedMutation {
+    pub fn new(device_led: DeviceLed) -> Self {
+        Self(Mutex::new(device_led))
+    }
+}
+
+/// Mutation wrapper for a device led
+#[cfg(feature = "async-graphql")]
+#[async_graphql::Object]
+impl DeviceLedMutation {
+    async fn set_state(&self, state: DeviceLedStateInput) -> Result<DeviceLedState> {
+        let mut led = self.0.lock()?;
+        let current_state = led.get_state()?;
+
+        let new_state = state.merge_with_state(current_state);
+
+        led.set_state(&new_state)?;
+
+        Ok(new_state)
+    }
 }
 
 impl Debug for DeviceLed {

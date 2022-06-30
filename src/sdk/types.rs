@@ -19,3 +19,8 @@ pub type LedStyles = *mut SAFEARRAY;
 pub type ColorLevel = DWORD;
 pub type BrightLevel = DWORD;
 pub type SpeedLevel = DWORD;
+
+/// used to filter specific objects
+pub trait Filter<T> {
+    fn predicate(&self, obj: T) -> bool;
+}

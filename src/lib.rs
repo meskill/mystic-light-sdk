@@ -1,3 +1,5 @@
+#![cfg_attr(docsrs, feature(doc_cfg))]
+
 //! Rust SDK wrapper for the [Mystic Light SDK](https://www.msi.com/Landing/mystic-light-rgb-gaming-pc/download)
 //!
 //! # Requirements
@@ -54,6 +56,26 @@
 //! ## serde
 //!
 //! Enables [serde](https://crates.io/crates/serde) serialization/deserialization for some of the sdk structs
+//!
+//! ## async-graphql
+//!
+//! Enables [async-graphql](https://crates.io/crates/async-graphql) support for sdk entities
+//!
+//! When this feature is enabled you can use [MysticLightSDK] as async_graphql::Query and [MysticLightSDKMutation] as async_graphql::Mutation
+//!
+//! ```
+//! use async_graphql::{EmptySubscription, Schema};
+//! use mystic_light_sdk::{MysticLightSDK, MysticLightSDKMutation};
+//!
+//! pub type MysticLightSchema = Schema<MysticLightSDK, MysticLightSDKMutation, EmptySubscription>;
+//!
+//! pub fn create_qraphql_schema(sdk: MysticLightSDK) -> MysticLightSchema {
+//!     let mutation = MysticLightSDKMutation(sdk.clone());
+//!
+//!     Schema::build(sdk, mutation, EmptySubscription).finish()
+//! }
+//!
+//! ```
 //!
 //! # Troubleshooting
 //!
