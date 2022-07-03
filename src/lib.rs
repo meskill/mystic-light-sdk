@@ -51,6 +51,13 @@
 //!
 //! That all means you can safely use rust wrapper both in single-threaded and multi-threaded environments, but actual sdk calls will be executed in sequence anyway.
 //!
+//! # Usage
+//!
+//! ## logging
+//!
+//! Logging is implemented with library [`log`](https://docs.rs/log/0.4.17/log/index.html) - to enable actual logging just pick one of the logger
+//! implementation from the [list](https://docs.rs/log/0.4.17/log/index.html#available-logging-implementations) and activate log for the module `mystic_light` e.g. for `env_logger` pass `RUST_LOG=mystic_light_sdk`
+//!
 //! # Features
 //!
 //! ## serde

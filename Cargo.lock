@@ -492,6 +492,7 @@ dependencies = [
  "copy_dir",
  "custom_error",
  "libloading",
+ "log",
  "oaidl",
  "serde",
  "serde_json",

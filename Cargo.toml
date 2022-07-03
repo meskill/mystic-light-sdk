@@ -23,6 +23,7 @@ rustdoc-args = ["--cfg", "docsrs"]
 async-graphql = { version="4.0.1", optional=true }
 custom_error = "1.9.2"
 libloading = "0.7.3"
+log = "0.4.17"
 oaidl = "0.2.1"
 serde = { version="1.0.137", optional=true, features=["derive"] }
 widestring = "0.4.3" # version compatible with `oaidl`
