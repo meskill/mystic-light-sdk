@@ -2,8 +2,6 @@ use std::collections::HashSet;
 use std::fmt::Debug;
 use std::ptr::null_mut;
 use std::sync::{Arc, Mutex};
-use std::thread;
-use std::time::Duration;
 
 use libloading::{Library, Symbol};
 
@@ -184,6 +182,12 @@ impl DeviceLed {
         device_name: &str,
         led_index: u32,
     ) -> Result<Self> {
+        log::debug!(
+            "fn:new call with args: device_name={}, led_index={}",
+            device_name,
+            led_index
+        );
+
         let get_led_info: Symbol<
             unsafe extern "C" fn(
                 device_name: DeviceName,
@@ -248,6 +252,14 @@ impl DeviceLed {
 
         drop(library_instance);
 
+        log::debug!(
+            "fn:new got led with: name={}, supported_style={:?}, max_bright={}, max_speed={}",
+            name,
+            supported_styles,
+            max_bright,
+            max_speed
+        );
+
         Ok(Self {
             library,
             device_name,
@@ -261,6 +273,8 @@ impl DeviceLed {
 
     /// Return state of the led
     pub fn get_state(&self) -> Result<DeviceLedState> {
+        log::debug!("fn:get_state call for led with name={}", &self.name);
+
         let get_led_style: Symbol<
             unsafe extern "C" fn(
                 device_name: DeviceName,
@@ -338,6 +352,13 @@ impl DeviceLed {
 
         let color = Color { red, green, blue };
 
+        log::debug!(
+            "fn:get_state got state with: color={:?}, bright={}, speed={}",
+            color,
+            bright,
+            speed
+        );
+
         Ok(DeviceLedState {
             style: Bstr::from(style).to_string(),
             color,
@@ -348,6 +369,11 @@ impl DeviceLed {
 
     /// Set led style
     pub fn set_style(&self, style: &str) -> Result<()> {
+        log::debug!(
+            "fn:set_style call for led with name={} with args: style={}",
+            &self.name,
+            style
+        );
         let set_led_style: Symbol<
             unsafe extern "C" fn(
                 device_name: DeviceName,
@@ -391,6 +417,12 @@ impl DeviceLed {
     /// Some of the styles do not support setting color for the led.
     /// In this case this method will return `Err(CommonError::MysticLightSDKError(Timeout))` as this error is returned by the underlying dll
     pub fn set_color(&self, color: &Color) -> Result<()> {
+        log::debug!(
+            "fn:set_color call with name={} with args: color={:?}",
+            &self.name,
+            color
+        );
+
         let set_led_color: Symbol<
             unsafe extern "C" fn(
                 device_name: DeviceName,
@@ -427,6 +459,12 @@ impl DeviceLed {
     /// Some of the styles do not support setting color for the led.
     /// In this case this method will return `Err(CommonError::MysticLightSDKError(Timeout))` as this error is returned by the underlying dll
     pub fn set_bright(&self, bright: BrightLevel) -> Result<()> {
+        log::debug!(
+            "fn:set_bright call with name={} with args: bright={}",
+            &self.name,
+            bright
+        );
+
         let set_led_bright: Symbol<
             unsafe extern "C" fn(
                 device_name: DeviceName,
@@ -457,6 +495,12 @@ impl DeviceLed {
     /// Some of the styles do not support setting color for the led.
     /// In this case this method will return `Err(CommonError::MysticLightSDKError(Timeout))` as this error is returned by the underlying dll
     pub fn set_speed(&self, speed: SpeedLevel) -> Result<()> {
+        log::debug!(
+            "fn:set_speed call with name={} with args: speed={}",
+            &self.name,
+            speed
+        );
+
         let set_led_speed: Symbol<
             unsafe extern "C" fn(
                 device_name: DeviceName,
@@ -487,6 +531,12 @@ impl DeviceLed {
     /// Some of the styles do not support setting color for the led.
     /// In this case this method will return `Err(CommonError::MysticLightSDKError(Timeout))` as this error is returned by the underlying dll
     pub fn set_state(&mut self, state: &DeviceLedState) -> Result<()> {
+        log::debug!(
+            "fn:set_state call with name={} with args: state={:?}",
+            &self.name,
+            state
+        );
+
         self.set_style(&state.style)?;
         match self.set_color(&state.color) {
             Ok(_) => (),

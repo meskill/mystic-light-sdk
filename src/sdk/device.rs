@@ -95,6 +95,12 @@ impl Device {
     }
 
     pub(crate) fn new(library: Arc<Mutex<Library>>, name: String, led_count: u32) -> Self {
+        log::debug!(
+            "fn:new call with args: name={}, led_count={}",
+            name,
+            led_count
+        );
+
         Self {
             library,
             name,
@@ -111,6 +117,8 @@ impl Device {
     where
         F: for<'a> Filter<&'a DeviceLed>,
     {
+        log::debug!("fn:leds_with_filter call");
+
         let leds = (0..self.led_count)
             .into_iter()
             .map(|led_index| DeviceLed::new(Arc::clone(&self.library), &self.name, led_index))

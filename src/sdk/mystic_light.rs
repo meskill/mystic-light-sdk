@@ -95,6 +95,7 @@ impl MysticLightSDK {
     ///
     /// **You must pass valid dll based on the os architecture**
     pub fn new(lib_path: &str) -> Result<Self> {
+        log::debug!("fn:new call");
         let library;
 
         unsafe {
@@ -112,6 +113,7 @@ impl MysticLightSDK {
     }
 
     pub fn get_devices(&self) -> Result<Vec<Device>> {
+        log::debug!("fn:get_devices call");
         self.get_devices_with_filter(DeviceFilter::default())
     }
 
@@ -120,6 +122,8 @@ impl MysticLightSDK {
     where
         F: for<'a> Filter<&'a str>,
     {
+        log::debug!("fn:get_devices_with_filter call");
+
         let mut dev_type: DeviceTypes = null_mut();
         let mut led_count: LedCounts = null_mut();
 
@@ -141,6 +145,12 @@ impl MysticLightSDK {
 
         let devices: Vec<String> = Vec::from_safearray(dev_type);
         let leds: Vec<String> = Vec::from_safearray(led_count);
+
+        log::debug!(
+            "fn:get_devices_with_filter got raw: devices={:?}, led={:?}",
+            devices,
+            leds
+        );
 
         Ok(devices
             .into_iter()
