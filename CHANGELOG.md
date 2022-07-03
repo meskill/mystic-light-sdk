@@ -1,3 +1,32 @@
+## [0.3.0](https://github.com/meskill/mystic-light-sdk/compare/v0.2.4...v0.3.0) (2022-07-03)
+
+
+### ⚠ BREAKING CHANGES
+
+* some functions are now private
+
+### Features
+
+* add logging ([fe92118](https://github.com/meskill/mystic-light-sdk/commit/fe9211806077613fcd9dd941b826176014b2061b))
+* async_graphql support ([fea4613](https://github.com/meskill/mystic-light-sdk/commit/fea4613c84eef33ef06a278c6372791d046619c8))
+* feat: support for multithreading ([0b8123c](https://github.com/meskill/mystic-light-sdk/commit/0b8123cb2b18fe66cefda97ee794573ed61a9225))
+
+
+### Chores
+
+* devcontainer config cleanup ([d4db6f1](https://github.com/meskill/mystic-light-sdk/commit/d4db6f170bf90e7dd6369418478ccdd34ab70e85))
+
+
+### Code Refactoring
+
+* hide factory functions with internal options from public access ([02ebc48](https://github.com/meskill/mystic-light-sdk/commit/02ebc48f812d18d02bc4d88ba7bfd6ced68efdcc))
+* mark errors as non_exhaustive ([5064098](https://github.com/meskill/mystic-light-sdk/commit/5064098556072e7fd1ade2c4603968c0855f8fd5))
+
+
+### Continuous Integration
+
+* test for different features groups ([dadfa9e](https://github.com/meskill/mystic-light-sdk/commit/dadfa9ed056b325116ff6e4f4320306fbdf4a6bc))
+
 ### [0.2.4](https://github.com/meskill/mystic-light-sdk/compare/v0.2.3...v0.2.4) (2022-05-26)
 
 

@@ -105,12 +105,52 @@ You may use build script included in the library itself to copy directory with s
  - in case of any problems with conversion from and into WinApi types
 
 
+## How does it work
+
+
+### Parallelism
+
+Underlying C++ SDK doesn’t support parallel access and trying to use sdk that way will lead to wrong data. To prevent such problems this wrapper wraps underlying library in Arc and Mutex. Arc is used to share the same library instance across wrapper structs. Mutex is used to prevent parallel access to the underlying library.
+
+That all means you can safely use rust wrapper both in single-threaded and multi-threaded environments, but actual sdk calls will be executed in sequence anyway.
+
+
+## Usage
+
+
+### logging
+
+Logging is implemented with library [`log`][__link2] - to enable actual logging just pick one of the logger implementation from the [list][__link3] and activate log for the module `mystic_light` e.g. for `env_logger` pass `RUST_LOG=mystic_light_sdk`
+
+
 ## Features
 
 
 ### serde
 
-Enables [serde][__link2] serialization/deserialization for some of the sdk structs
+Enables [serde][__link4] serialization/deserialization for some of the sdk structs
+
+
+### async-graphql
+
+Enables [async-graphql][__link5] support for sdk entities
+
+When this feature is enabled you can use [MysticLightSDK][__link6] as async_graphql::Query and [MysticLightSDKMutation][__link7] as async_graphql::Mutation
+
+
+```rust
+use async_graphql::{EmptySubscription, Schema};
+use mystic_light_sdk::{MysticLightSDK, MysticLightSDKMutation};
+
+pub type MysticLightSchema = Schema<MysticLightSDK, MysticLightSDKMutation, EmptySubscription>;
+
+pub fn create_qraphql_schema(sdk: MysticLightSDK) -> MysticLightSchema {
+    let mutation = MysticLightSDKMutation(sdk.clone());
+
+    Schema::build(sdk, mutation, EmptySubscription).finish()
+}
+
+```
 
 
 ## Troubleshooting
@@ -126,6 +166,12 @@ Make sure you have been fulfilled [requirements](#requirements) and you running 
 Some of the device’s styles do not support colors. In this case this kind of error will be generated.
 
 
+ [__cargo_doc2readme_dependencies_info]: ggGkYW0AYXSEG52uRQSwBdezG6GWW8ODAbr5G6KRmT_WpUB5G9hPmBcUiIp6YXKEG6X8erNhPunCG31Cv27-Bu8hG7nWaAb2Sc_TG4vh1fzzx_YPYWSCgm5NeXN0aWNMaWdodFNES_aCdk15c3RpY0xpZ2h0U0RLTXV0YXRpb272
  [__link0]: https://www.msi.com/Landing/mystic-light-rgb-gaming-pc/download
  [__link1]: https://www.msi.com/Landing/mystic-light-rgb-gaming-pc/download
- [__link2]: https://crates.io/crates/serde
+ [__link2]: https://docs.rs/log/0.4.17/log/index.html
+ [__link3]: https://docs.rs/log/0.4.17/log/index.html#available-logging-implementations
+ [__link4]: https://crates.io/crates/serde
+ [__link5]: https://crates.io/crates/async-graphql
+ [__link6]: https://crates.io/crates/MysticLightSDK
+ [__link7]: https://crates.io/crates/MysticLightSDKMutation
