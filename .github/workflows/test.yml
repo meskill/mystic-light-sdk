@@ -8,11 +8,12 @@ on:
       - master
 
 jobs:
-  build:
+  check:
     strategy:
       matrix:
         toolchain: [stable]
-        target: [x86_64-pc-windows-gnu, x86_64-pc-windows-msvc, i686-pc-windows-gnu, i686-pc-windows-msvc]
+        target: [x86_64-pc-windows-gnu, x86_64-pc-windows-msvc]
+        features: ['', --features serde, --features async-graphql, --all-features]
 
     runs-on: windows-2022
     steps:
@@ -26,13 +27,13 @@ jobs:
       - name: Rust cache
         uses: Swatinem/rust-cache@v1
         with:
-          sharedKey: build
-      - name: build
-        run: cargo --locked build
+          sharedKey: check
+      - name: check
+        run: cargo --locked check ${{ matrix.features }}
 
   lint:
     runs-on: windows-2022
-    needs: build
+    needs: check
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -43,7 +44,7 @@ jobs:
       - name: Rust cache
         uses: Swatinem/rust-cache@v1
         with:
-          sharedKey: build
+          sharedKey: check
       - name: Lint src
         run: cargo clippy -- -D warnings
       - name: Lint examples
@@ -51,7 +52,7 @@ jobs:
 
   test:
     runs-on: windows-2022
-    needs: build
+    needs: check
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -62,6 +63,6 @@ jobs:
       - name: Rust cache
         uses: Swatinem/rust-cache@v1
         with:
-          sharedKey: build
+          sharedKey: check
       - name: Test
         run: cargo test --all-features

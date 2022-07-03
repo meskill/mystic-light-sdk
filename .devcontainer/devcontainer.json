@@ -42,7 +42,7 @@
         // debug
         "hediet.debug-visualizer",
         // rust
-        "matklad.rust-analyzer",
+        "rust-lang.rust-analyzer",
         "serayuzgur.crates",
         "vadimcn.vscode-lldb",
         "bungcip.better-toml"

@@ -39,7 +39,7 @@ jobs:
       - name: Rust cache
         uses: Swatinem/rust-cache@v1
         with:
-          sharedKey: build
+          sharedKey: check
       - name: Publish
         uses: cycjimmy/semantic-release-action@v3
         id: release
