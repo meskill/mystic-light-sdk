@@ -31,7 +31,7 @@ jobs:
       - name: Rust cache
         uses: Swatinem/rust-cache@v1
         with:
-          sharedKey: build
+          sharedKey: check
       - name: Get branch name
         id: branch-name
         uses: tj-actions/branch-names@v5
