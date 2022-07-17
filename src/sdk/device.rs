@@ -1,12 +1,14 @@
+use either::Either;
+use libloading::Library;
+use std::collections::HashMap;
 use std::fmt::Debug;
 use std::sync::{Arc, Mutex};
 
 #[cfg(feature = "async-graphql")]
-use crate::DeviceLedMutation;
+use super::led::DeviceLedMutation;
 
 use super::led::DeviceLed;
 use super::types::{Filter, Result};
-use libloading::Library;
 
 /// used for filtering device's leds.
 /// Currently, supports only filtering by name
@@ -31,10 +33,23 @@ impl Filter<&DeviceLed> for DeviceLedFilter {
     }
 }
 
+#[cfg(feature = "async-graphql")]
+fn filter_leds(
+    leds: &HashMap<String, DeviceLed>,
+    filter: DeviceLedFilter,
+) -> Either<impl Iterator<Item = &DeviceLed>, impl Iterator<Item = &DeviceLed>> {
+    match filter.names {
+        Some(names) => Either::Left(names.into_iter().filter_map(|led_name| leds.get(&led_name))),
+        None => Either::Right(leds.values()),
+    }
+}
+
 /// Represents single hardware MysticLight Device
 #[cfg_attr(feature = "serde", derive(serde::Serialize))]
 pub struct Device {
     name: String,
+
+    pub(crate) leds: HashMap<String, DeviceLed>,
 
     #[cfg_attr(feature = "serde", serde(skip))]
     library: Arc<Mutex<Library>>,
@@ -51,32 +66,24 @@ impl Device {
         self.name()
     }
 
-    #[graphql(name = "leds")]
-    async fn async_graphql_leds(
-        &self,
-        #[graphql(default)] filter: DeviceLedFilter,
-    ) -> Result<Vec<DeviceLed>> {
-        self.leds_with_filter(filter)
+    async fn leds(&self, #[graphql(default)] filter: DeviceLedFilter) -> Vec<&DeviceLed> {
+        filter_leds(&self.leds, filter).collect()
     }
 }
 
 /// Mutation wrapper for a device
 #[cfg(feature = "async-graphql")]
 #[cfg_attr(docsrs, doc(cfg(feature = "async-graphql")))]
-pub struct DeviceMutation(pub Device);
+pub struct DeviceMutation<'a>(pub &'a Device);
 
 /// Mutation wrapper for a device
 #[cfg(feature = "async-graphql")]
 #[async_graphql::Object]
-impl DeviceMutation {
-    async fn leds(
-        &self,
-        ctx: &async_graphql::Context<'_>,
-        #[graphql(default)] filter: DeviceLedFilter,
-    ) -> Result<Vec<DeviceLedMutation>> {
-        let leds = self.0.async_graphql_leds(ctx, filter).await?;
-
-        Ok(leds.into_iter().map(DeviceLedMutation::new).collect())
+impl<'a> DeviceMutation<'a> {
+    async fn leds(&self, #[graphql(default)] filter: DeviceLedFilter) -> Vec<DeviceLedMutation> {
+        filter_leds(&self.0.leds, filter)
+            .map(DeviceLedMutation)
+            .collect()
     }
 }
 
@@ -94,39 +101,48 @@ impl Device {
         &self.name
     }
 
-    pub(crate) fn new(library: Arc<Mutex<Library>>, name: String, led_count: u32) -> Self {
+    pub(crate) fn new(library: Arc<Mutex<Library>>, name: String, led_count: u32) -> Result<Self> {
         log::debug!(
             "fn:new call with args: name={}, led_count={}",
             name,
             led_count
         );
 
-        Self {
+        let leds = Self::resolve_leds(&library, &name, led_count)?;
+
+        Ok(Self {
             library,
             name,
             led_count,
-        }
+            leds,
+        })
     }
 
-    /// returns vec of device's leds
-    pub fn leds(&self) -> Result<Vec<DeviceLed>> {
-        self.leds_with_filter(DeviceLedFilter::default())
+    pub fn leds_iter(&self) -> impl Iterator<Item = &DeviceLed> {
+        self.leds.values()
     }
 
-    pub fn leds_with_filter<F>(&self, filter: F) -> Result<Vec<DeviceLed>>
-    where
-        F: for<'a> Filter<&'a DeviceLed>,
-    {
-        log::debug!("fn:leds_with_filter call");
+    pub fn reload(&mut self) -> Result<()> {
+        log::debug!("fn:reload call");
 
-        let leds = (0..self.led_count)
+        self.leds = Self::resolve_leds(&self.library, &self.name, self.led_count)?;
+
+        Ok(())
+    }
+
+    fn resolve_leds(
+        library: &Arc<Mutex<Library>>,
+        name: &str,
+        led_count: u32,
+    ) -> Result<HashMap<String, DeviceLed>> {
+        let leds = (0..led_count)
             .into_iter()
-            .map(|led_index| DeviceLed::new(Arc::clone(&self.library), &self.name, led_index))
-            .filter(|led| match led {
-                Ok(led) => filter.predicate(led),
-                Err(_) => true,
+            .map(|led_index| {
+                let led = DeviceLed::new(Arc::clone(library), name, led_index)?;
+
+                Ok((led.name().to_owned(), led))
             })
-            .collect::<Result<Vec<_>>>()?;
+            .collect::<Result<_>>()?;
 
         Ok(leds)
     }

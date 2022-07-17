@@ -22,6 +22,7 @@ rustdoc-args = ["--cfg", "docsrs"]
 [dependencies]
 async-graphql = { version="4.0.1", optional=true }
 custom_error = "1.9.2"
+either = "1.7.0"
 libloading = "0.7.3"
 log = "0.4.17"
 oaidl = "0.2.1"
