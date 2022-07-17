@@ -11,13 +11,13 @@ const LIB_PATH: &str = if cfg!(target_arch = "x86_64") {
 fn main() -> Result<(), CommonError> {
     let sdk = MysticLightSDK::new(LIB_PATH)?;
 
-    let devices = sdk.get_devices()?;
+    let devices: Vec<_> = sdk.devices_iter().collect();
 
     println!("{:#?}", devices);
 
     println!("Second Device name is {}", devices[2].name());
 
-    let mut keyboard_leds = devices[2].leds()?;
+    let keyboard_leds: Vec<_> = devices[2].leds_iter().collect();
 
     println!("{:#?}", keyboard_leds);
 

@@ -31,10 +31,8 @@ pub struct DeviceLedState {
     pub speed: u32,
 }
 
-/// Represents state of the single led
-#[cfg(feature = "async-graphql")]
+/// Represents state of the single led, but with optional fields
 #[cfg_attr(feature = "async-graphql", derive(async_graphql::InputObject))]
-#[cfg_attr(docsrs, doc(cfg(feature = "async-graphql")))]
 pub struct DeviceLedStateInput {
     /// current style of the led
     pub style: Option<String>,
@@ -44,31 +42,6 @@ pub struct DeviceLedStateInput {
     pub bright: Option<u32>,
     /// current speed of the led (some of the styles do not support this, so there will be fake data in this case)
     pub speed: Option<u32>,
-}
-
-#[cfg(feature = "async-graphql")]
-impl DeviceLedStateInput {
-    pub fn merge_with_state(self, current_state: DeviceLedState) -> DeviceLedState {
-        let mut state = DeviceLedState { ..current_state };
-
-        if let Some(style) = self.style {
-            state.style = style;
-        }
-
-        if let Some(color) = self.color {
-            state.color = color;
-        }
-
-        if let Some(bright) = self.bright {
-            state.bright = bright;
-        }
-
-        if let Some(speed) = self.speed {
-            state.speed = speed;
-        }
-
-        state
-    }
 }
 
 /// Represents single led of the device
@@ -124,28 +97,16 @@ impl DeviceLed {
 /// Mutation wrapper for a device led
 #[cfg(feature = "async-graphql")]
 #[cfg_attr(docsrs, doc(cfg(feature = "async-graphql")))]
-pub struct DeviceLedMutation(Mutex<DeviceLed>);
-
-#[cfg(feature = "async-graphql")]
-impl DeviceLedMutation {
-    pub fn new(device_led: DeviceLed) -> Self {
-        Self(Mutex::new(device_led))
-    }
-}
+pub struct DeviceLedMutation<'a>(pub &'a DeviceLed);
 
 /// Mutation wrapper for a device led
 #[cfg(feature = "async-graphql")]
 #[async_graphql::Object]
-impl DeviceLedMutation {
-    async fn set_state(&self, state: DeviceLedStateInput) -> Result<DeviceLedState> {
-        let mut led = self.0.lock()?;
-        let current_state = led.get_state()?;
+impl<'a> DeviceLedMutation<'a> {
+    pub async fn set_state(&self, state: DeviceLedStateInput) -> Result<bool> {
+        self.0.merge_with_state(&state)?;
 
-        let new_state = state.merge_with_state(current_state);
-
-        led.set_state(&new_state)?;
-
-        Ok(new_state)
+        Ok(true)
     }
 }
 
@@ -465,6 +426,14 @@ impl DeviceLed {
             bright
         );
 
+        if bright > self.max_bright {
+            return Err(UsageError::ExcessBrightLevel {
+                level: bright,
+                max_level: self.max_bright,
+            }
+            .into());
+        }
+
         let set_led_bright: Symbol<
             unsafe extern "C" fn(
                 device_name: DeviceName,
@@ -501,6 +470,14 @@ impl DeviceLed {
             speed
         );
 
+        if speed > self.max_speed {
+            return Err(UsageError::ExcessSpeedLevel {
+                level: speed,
+                max_level: self.max_bright,
+            }
+            .into());
+        }
+
         let set_led_speed: Symbol<
             unsafe extern "C" fn(
                 device_name: DeviceName,
@@ -530,7 +507,7 @@ impl DeviceLed {
     ///
     /// Some of the styles do not support setting color for the led.
     /// In this case this method will return `Err(CommonError::MysticLightSDKError(Timeout))` as this error is returned by the underlying dll
-    pub fn set_state(&mut self, state: &DeviceLedState) -> Result<()> {
+    pub fn set_state(&self, state: &DeviceLedState) -> Result<()> {
         log::debug!(
             "fn:set_state call with name={} with args: state={:?}",
             &self.name,
@@ -538,6 +515,8 @@ impl DeviceLed {
         );
 
         self.set_style(&state.style)?;
+        self.set_bright(state.bright)?;
+        self.set_speed(state.speed)?;
         match self.set_color(&state.color) {
             Ok(_) => (),
             Err(CommonError::SdkError {
@@ -545,8 +524,33 @@ impl DeviceLed {
             }) => (),
             error => return error,
         };
-        self.set_bright(state.bright)?;
-        self.set_speed(state.speed)?;
+
+        Ok(())
+    }
+
+    /// Merge led current state with passed one i.e. applies only props that are Some() in passed argument
+    pub fn merge_with_state(&self, state: &DeviceLedStateInput) -> Result<()> {
+        if let Some(style) = &state.style {
+            self.set_style(style)?;
+        }
+
+        if let Some(bright) = state.bright {
+            self.set_bright(bright)?;
+        }
+
+        if let Some(speed) = state.speed {
+            self.set_speed(speed)?;
+        }
+
+        if let Some(color) = &state.color {
+            match self.set_color(color) {
+                Ok(_) => (),
+                Err(CommonError::SdkError {
+                    source: MysticLightSDKError::NotSupported,
+                }) => (),
+                error => return error,
+            };
+        }
 
         Ok(())
     }
