@@ -1,3 +1,4 @@
+use std::clone::Clone;
 use std::sync::PoisonError;
 
 use custom_error::custom_error;
@@ -37,6 +38,7 @@ custom_error! {
 
 custom_error! {
   /// Errors with multithreading
+  #[derive(Clone)]
   #[non_exhaustive]
   pub SyncError
     Poison = "Shared object (Mutex or RwLock) is poisoned"

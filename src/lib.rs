@@ -68,18 +68,18 @@
 //!
 //! Enables [async-graphql](https://crates.io/crates/async-graphql) support for sdk entities
 //!
-//! When this feature is enabled you can use [MysticLightSDK] as async_graphql::Query and [MysticLightSDKMutation] as async_graphql::Mutation
+//! When this feature is enabled you can use [MysticLightGraphqlQuery] as async_graphql::Query and [MysticLightGraphqlMutation] as async_graphql::Mutation
 //!
 //! ```
 //! use async_graphql::{EmptySubscription, Schema};
-//! use mystic_light_sdk::{MysticLightSDK, MysticLightSDKMutation};
+//! use mystic_light_sdk::{build_graphql_schema, MysticLightSDK, MysticLightGraphqlMutation, MysticLightGraphqlQuery};
 //!
-//! pub type MysticLightSchema = Schema<MysticLightSDK, MysticLightSDKMutation, EmptySubscription>;
+//! pub type MysticLightSchema = Schema<MysticLightGraphqlQuery, MysticLightGraphqlMutation, EmptySubscription>;
 //!
 //! pub fn create_qraphql_schema(sdk: MysticLightSDK) -> MysticLightSchema {
-//!     let mutation = MysticLightSDKMutation(sdk.clone());
+//!     let (query, mutation) = build_graphql_schema(sdk);
 //!
-//!     Schema::build(sdk, mutation, EmptySubscription).finish()
+//!     Schema::build(query, mutation, EmptySubscription).finish()
 //! }
 //!
 //! ```

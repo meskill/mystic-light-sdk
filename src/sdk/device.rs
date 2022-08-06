@@ -1,3 +1,4 @@
+#[cfg(feature = "async-graphql")]
 use either::Either;
 use libloading::Library;
 use std::collections::HashMap;
@@ -66,6 +67,7 @@ impl Device {
         self.name()
     }
 
+    /// returns device's leds
     async fn leds(&self, #[graphql(default)] filter: DeviceLedFilter) -> Vec<&DeviceLed> {
         filter_leds(&self.leds, filter).collect()
     }
@@ -80,6 +82,7 @@ pub struct DeviceMutation<'a>(pub &'a Device);
 #[cfg(feature = "async-graphql")]
 #[async_graphql::Object]
 impl<'a> DeviceMutation<'a> {
+    /// returns device's leds wrapped in mutation wrapper
     async fn leds(&self, #[graphql(default)] filter: DeviceLedFilter) -> Vec<DeviceLedMutation> {
         filter_leds(&self.0.leds, filter)
             .map(DeviceLedMutation)
@@ -118,10 +121,12 @@ impl Device {
         })
     }
 
+    /// returns iterator over device's leds
     pub fn leds_iter(&self) -> impl Iterator<Item = &DeviceLed> {
         self.leds.values()
     }
 
+    /// reload cached leds info
     pub fn reload(&mut self) -> Result<()> {
         log::debug!("fn:reload call");
 
