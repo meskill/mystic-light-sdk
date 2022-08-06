@@ -103,6 +103,7 @@ pub struct DeviceLedMutation<'a>(pub &'a DeviceLed);
 #[cfg(feature = "async-graphql")]
 #[async_graphql::Object]
 impl<'a> DeviceLedMutation<'a> {
+    /// updates state for the device led
     pub async fn set_state(&self, state: DeviceLedStateInput) -> Result<bool> {
         self.0.merge_with_state(&state)?;
 

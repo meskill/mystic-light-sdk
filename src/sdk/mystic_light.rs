@@ -4,12 +4,13 @@ use std::{
     sync::{Arc, Mutex},
 };
 
+#[cfg(feature = "async-graphql")]
 use either::Either;
 use libloading::{Library, Symbol};
 
-#[cfg(feature = "async-graphql")]
-use crate::DeviceMutation;
 use crate::{winapi::FromSafeArray, DeviceTypes, LedCounts, MysticLightSdkResult};
+#[cfg(feature = "async-graphql")]
+use crate::{DeviceMutation, SyncError};
 
 use super::{
     device::Device,
@@ -59,12 +60,15 @@ fn filter_devices(
 pub struct MysticLightSDK {
     library: Arc<Mutex<Library>>,
     devices: HashMap<String, Device>,
+    #[cfg(feature = "async-graphql")]
+    lib_path: String,
 }
 
 /// Rust Wrapper for the underlying Mystic Light SDK
 #[cfg(feature = "async-graphql")]
 #[async_graphql::Object]
 impl MysticLightSDK {
+    /// returns Mystic Light devices
     async fn devices(&self, #[graphql(default)] filter: DeviceFilter) -> Vec<&Device> {
         filter_devices(&self.devices, filter).collect()
     }
@@ -79,11 +83,87 @@ pub struct MysticLightSDKMutation(pub Arc<MysticLightSDK>);
 #[cfg(feature = "async-graphql")]
 #[async_graphql::Object]
 impl MysticLightSDKMutation {
-    async fn devices(&self, #[graphql(default)] filter: DeviceFilter) -> Vec<DeviceMutation> {
-        filter_devices(&self.0.devices, filter)
+    /// returns Mystic Light devices wrapped in mutation wrapper
+    async fn devices(
+        &self,
+        #[graphql(default)] filter: DeviceFilter,
+    ) -> Result<Vec<DeviceMutation>> {
+        let devices = filter_devices(&self.0.devices, filter)
             .map(DeviceMutation)
-            .collect()
+            .collect();
+
+        Ok(devices)
     }
+}
+
+#[cfg(feature = "async-graphql")]
+struct MysticLightGraphqlWrapper(pub Mutex<Arc<MysticLightSDK>>);
+
+#[cfg(feature = "async-graphql")]
+impl MysticLightGraphqlWrapper {
+    fn sdk(&self) -> std::result::Result<Arc<MysticLightSDK>, SyncError> {
+        let sdk = self.0.lock()?;
+
+        Ok(Arc::clone(&sdk))
+    }
+
+    fn reload(&self) -> Result<()> {
+        let mut sdk = self.0.lock()?;
+
+        *sdk = Arc::new(MysticLightSDK::new(&sdk.lib_path)?);
+
+        Ok(())
+    }
+}
+
+/// Graphql query for MysticLightSDK
+#[cfg(feature = "async-graphql")]
+pub struct MysticLightGraphqlQuery(Arc<MysticLightGraphqlWrapper>);
+
+/// Graphql query for MysticLightSDK
+#[cfg(feature = "async-graphql")]
+#[async_graphql::Object]
+impl MysticLightGraphqlQuery {
+    #[graphql(flatten)]
+    async fn sdk(&self) -> std::result::Result<Arc<MysticLightSDK>, SyncError> {
+        self.0.sdk()
+    }
+}
+
+/// Graphql mutation for MysticLightSDK
+#[cfg(feature = "async-graphql")]
+pub struct MysticLightGraphqlMutation(Arc<MysticLightGraphqlWrapper>);
+
+/// Graphql mutation for MysticLightSDK
+#[cfg(feature = "async-graphql")]
+#[async_graphql::Object]
+impl MysticLightGraphqlMutation {
+    #[graphql(flatten)]
+    async fn sdk(&self) -> std::result::Result<MysticLightSDKMutation, SyncError> {
+        let sdk = self.0.sdk()?;
+
+        Ok(MysticLightSDKMutation(sdk))
+    }
+
+    /// Full reload of Mystic Light SDK to get most-fresh hardware data
+    async fn reload(&self) -> Result<bool> {
+        self.0.reload()?;
+
+        Ok(true)
+    }
+}
+
+#[cfg(feature = "async-graphql")]
+pub fn build_graphql_schema(
+    sdk: MysticLightSDK,
+) -> (MysticLightGraphqlQuery, MysticLightGraphqlMutation) {
+    let sdk = Arc::new(sdk);
+    let wrapper = Arc::new(MysticLightGraphqlWrapper(Mutex::new(sdk)));
+
+    (
+        MysticLightGraphqlQuery(Arc::clone(&wrapper)),
+        MysticLightGraphqlMutation(Arc::clone(&wrapper)),
+    )
 }
 
 impl MysticLightSDK {
@@ -123,13 +203,20 @@ impl MysticLightSDK {
         let library = Arc::new(Mutex::new(library));
         let devices = Self::resolve_devices(&library)?;
 
-        Ok(MysticLightSDK { library, devices })
+        Ok(MysticLightSDK {
+            library,
+            devices,
+            #[cfg(feature = "async-graphql")]
+            lib_path: lib_path.to_owned(),
+        })
     }
 
+    /// returns Iterator iver Mystic Light devices
     pub fn devices_iter(&self) -> impl Iterator<Item = &Device> {
         self.devices.values()
     }
 
+    /// reload cached devices info
     pub fn reload(&mut self) -> Result<()> {
         log::debug!("fn:reload call");
 
