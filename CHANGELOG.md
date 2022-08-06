@@ -1,3 +1,15 @@
+## [0.4.0](https://github.com/meskill/mystic-light-sdk/compare/v0.3.0...v0.4.0) (2022-08-06)
+
+
+### Features
+
+* methods to update device led state with partial values ([4f37a44](https://github.com/meskill/mystic-light-sdk/commit/4f37a446ac67cbf8a6675b39ae8ce20cc1849e63))
+
+
+### Code Refactoring
+
+* rethinking the way to work with async-graphql library ([dfea16e](https://github.com/meskill/mystic-light-sdk/commit/dfea16eae6b3adab2679878a14164a90e3087aaa))
+
 ## [0.3.0](https://github.com/meskill/mystic-light-sdk/compare/v0.2.4...v0.3.0) (2022-07-03)
 
 

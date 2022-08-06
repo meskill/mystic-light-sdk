@@ -28,13 +28,13 @@ const LIB_PATH: &str = if cfg!(target_arch = "x86_64") {
 fn main() -> Result<(), CommonError> {
    let sdk = MysticLightSDK::new(LIB_PATH)?;
 
-   let devices = sdk.get_devices()?;
+   let devices: Vec<_> = sdk.devices_iter().collect();
 
    println!("{:#?}", devices);
 
    println!("Second Device name is {}", devices[2].name());
 
-   let mut keyboard_leds = devices[2].leds()?;
+   let keyboard_leds: Vec<_> = devices[2].leds_iter().collect();
 
    println!("{:#?}", keyboard_leds);
 
@@ -135,19 +135,19 @@ Enables [serde][__link4] serialization/deserialization for some of the sdk struc
 
 Enables [async-graphql][__link5] support for sdk entities
 
-When this feature is enabled you can use [MysticLightSDK][__link6] as async_graphql::Query and [MysticLightSDKMutation][__link7] as async_graphql::Mutation
+When this feature is enabled you can use [MysticLightGraphqlQuery][__link6] as async_graphql::Query and [MysticLightGraphqlMutation][__link7] as async_graphql::Mutation
 
 
 ```rust
 use async_graphql::{EmptySubscription, Schema};
-use mystic_light_sdk::{MysticLightSDK, MysticLightSDKMutation};
+use mystic_light_sdk::{build_graphql_schema, MysticLightSDK, MysticLightGraphqlMutation, MysticLightGraphqlQuery};
 
-pub type MysticLightSchema = Schema<MysticLightSDK, MysticLightSDKMutation, EmptySubscription>;
+pub type MysticLightSchema = Schema<MysticLightGraphqlQuery, MysticLightGraphqlMutation, EmptySubscription>;
 
 pub fn create_qraphql_schema(sdk: MysticLightSDK) -> MysticLightSchema {
-    let mutation = MysticLightSDKMutation(sdk.clone());
+    let (query, mutation) = build_graphql_schema(sdk);
 
-    Schema::build(sdk, mutation, EmptySubscription).finish()
+    Schema::build(query, mutation, EmptySubscription).finish()
 }
 
 ```
@@ -166,12 +166,12 @@ Make sure you have been fulfilled [requirements](#requirements) and you running 
 Some of the device’s styles do not support colors. In this case this kind of error will be generated.
 
 
- [__cargo_doc2readme_dependencies_info]: ggGkYW0AYXSEG52uRQSwBdezG6GWW8ODAbr5G6KRmT_WpUB5G9hPmBcUiIp6YXKEG6X8erNhPunCG31Cv27-Bu8hG7nWaAb2Sc_TG4vh1fzzx_YPYWSCgm5NeXN0aWNMaWdodFNES_aCdk15c3RpY0xpZ2h0U0RLTXV0YXRpb272
+ [__cargo_doc2readme_dependencies_info]: ggGkYW0AYXSEG52uRQSwBdezG6GWW8ODAbr5G6KRmT_WpUB5G9hPmBcUiIp6YXKEGzmwUxU2jxqYG5nuuKxrwtEnGxsKYRdHNhIWGzsJmocK4UXSYWSCgngaTXlzdGljTGlnaHRHcmFwaHFsTXV0YXRpb272gndNeXN0aWNMaWdodEdyYXBocWxRdWVyefY
  [__link0]: https://www.msi.com/Landing/mystic-light-rgb-gaming-pc/download
  [__link1]: https://www.msi.com/Landing/mystic-light-rgb-gaming-pc/download
  [__link2]: https://docs.rs/log/0.4.17/log/index.html
  [__link3]: https://docs.rs/log/0.4.17/log/index.html#available-logging-implementations
  [__link4]: https://crates.io/crates/serde
  [__link5]: https://crates.io/crates/async-graphql
- [__link6]: https://crates.io/crates/MysticLightSDK
- [__link7]: https://crates.io/crates/MysticLightSDKMutation
+ [__link6]: https://crates.io/crates/MysticLightGraphqlQuery
+ [__link7]: https://crates.io/crates/MysticLightGraphqlMutation
