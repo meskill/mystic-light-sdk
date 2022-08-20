@@ -1,3 +1,10 @@
+## [0.4.1](https://github.com/meskill/mystic-light-sdk/compare/v0.4.0...v0.4.1) (2022-08-20)
+
+
+### Features
+
+* migrate to tracing library for logging ([fd3051c](https://github.com/meskill/mystic-light-sdk/commit/fd3051cbdd3875a4acbbfe27e6e40df918c3635b))
+
 ## [0.4.0](https://github.com/meskill/mystic-light-sdk/compare/v0.3.0...v0.4.0) (2022-08-06)
 
 

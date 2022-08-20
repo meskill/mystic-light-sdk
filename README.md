@@ -19,6 +19,9 @@ use mystic_light_sdk::{Color, CommonError, DeviceLedState, MysticLightSDK};
 use std::thread;
 use std::time::Duration;
 
+use tracing::{info, warn, Level};
+use tracing_subscriber::{fmt, fmt::format::FmtSpan};
+
 const LIB_PATH: &str = if cfg!(target_arch = "x86_64") {
    "../sdk/MysticLight_SDK_x64.dll"
 } else {
@@ -26,19 +29,25 @@ const LIB_PATH: &str = if cfg!(target_arch = "x86_64") {
 };
 
 fn main() -> Result<(), CommonError> {
+   fmt()
+       .pretty()
+       .with_max_level(Level::DEBUG)
+       .with_span_events(FmtSpan::ACTIVE)
+       .init();
+
    let sdk = MysticLightSDK::new(LIB_PATH)?;
 
    let devices: Vec<_> = sdk.devices_iter().collect();
 
-   println!("{:#?}", devices);
+   info!(?devices);
 
-   println!("Second Device name is {}", devices[2].name());
+   info!(second_device_name = devices[2].name());
 
    let keyboard_leds: Vec<_> = devices[2].leds_iter().collect();
 
-   println!("{:#?}", keyboard_leds);
+   info!(?keyboard_leds);
 
-   println!(
+   info!(
        "First led has name: {} with max_bright: {} and max_speed: {}",
        keyboard_leds[0].name(),
        keyboard_leds[0].max_bright(),
@@ -47,9 +56,9 @@ fn main() -> Result<(), CommonError> {
 
    let state = keyboard_leds[0].get_state()?;
 
-   println!("Current device state: {:#?}", state);
+   info!("Current device state: {:#?}", state);
 
-   println!("Disable lightning!");
+   warn!("Disable lightning!");
 
    let new_state = DeviceLedState {
        color: Color {
@@ -65,7 +74,7 @@ fn main() -> Result<(), CommonError> {
 
    thread::sleep(Duration::from_secs(5));
 
-   println!("Enable lightning");
+   warn!("Enable lightning");
 
    keyboard_leds[0].set_state(&state)?;
 
@@ -118,9 +127,9 @@ That all means you can safely use rust wrapper both in single-threaded and multi
 ## Usage
 
 
-### logging
+### tracing
 
-Logging is implemented with library [`log`][__link2] - to enable actual logging just pick one of the logger implementation from the [list][__link3] and activate log for the module `mystic_light` e.g. for `env_logger` pass `RUST_LOG=mystic_light_sdk`
+Tracing is implemented with library [`tracing`][__link2] - to see tracing logs follow the [instructions of tracing crate][__link3].
 
 
 ## Features
@@ -166,11 +175,11 @@ Make sure you have been fulfilled [requirements](#requirements) and you running 
 Some of the device’s styles do not support colors. In this case this kind of error will be generated.
 
 
- [__cargo_doc2readme_dependencies_info]: ggGkYW0AYXSEG52uRQSwBdezG6GWW8ODAbr5G6KRmT_WpUB5G9hPmBcUiIp6YXKEGzmwUxU2jxqYG5nuuKxrwtEnGxsKYRdHNhIWGzsJmocK4UXSYWSCgngaTXlzdGljTGlnaHRHcmFwaHFsTXV0YXRpb272gndNeXN0aWNMaWdodEdyYXBocWxRdWVyefY
+ [__cargo_doc2readme_dependencies_info]: ggGkYW0AYXSEG52uRQSwBdezG6GWW8ODAbr5G6KRmT_WpUB5G9hPmBcUiIp6YXKEG9xtyNAZAPipG4wMjqR7OtZmG4Tbd1I_axk_G8brULg879U6YWSCgngaTXlzdGljTGlnaHRHcmFwaHFsTXV0YXRpb272gndNeXN0aWNMaWdodEdyYXBocWxRdWVyefY
  [__link0]: https://www.msi.com/Landing/mystic-light-rgb-gaming-pc/download
  [__link1]: https://www.msi.com/Landing/mystic-light-rgb-gaming-pc/download
- [__link2]: https://docs.rs/log/0.4.17/log/index.html
- [__link3]: https://docs.rs/log/0.4.17/log/index.html#available-logging-implementations
+ [__link2]: https://docs.rs/tracing/0.1.36/tracing/index.html
+ [__link3]: https://docs.rs/tracing/0.1.36/tracing/index.html#in-executables
  [__link4]: https://crates.io/crates/serde
  [__link5]: https://crates.io/crates/async-graphql
  [__link6]: https://crates.io/crates/MysticLightGraphqlQuery
