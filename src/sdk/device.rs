@@ -104,13 +104,8 @@ impl Device {
         &self.name
     }
 
+    #[tracing::instrument(level = "debug", skip(library))]
     pub(crate) fn new(library: Arc<Mutex<Library>>, name: String, led_count: u32) -> Result<Self> {
-        log::debug!(
-            "fn:new call with args: name={}, led_count={}",
-            name,
-            led_count
-        );
-
         let leds = Self::resolve_leds(&library, &name, led_count)?;
 
         Ok(Self {
@@ -127,9 +122,8 @@ impl Device {
     }
 
     /// reload cached leds info
+    #[tracing::instrument(level = "debug", skip_all, fields(self.name = self.name))]
     pub fn reload(&mut self) -> Result<()> {
-        log::debug!("fn:reload call");
-
         self.leds = Self::resolve_leds(&self.library, &self.name, self.led_count)?;
 
         Ok(())

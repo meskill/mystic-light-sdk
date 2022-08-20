@@ -2,6 +2,9 @@ use mystic_light_sdk::{Color, CommonError, DeviceLedState, MysticLightSDK};
 use std::thread;
 use std::time::Duration;
 
+use tracing::{info, warn, Level};
+use tracing_subscriber::{fmt, fmt::format::FmtSpan};
+
 const LIB_PATH: &str = if cfg!(target_arch = "x86_64") {
     "../sdk/MysticLight_SDK_x64.dll"
 } else {
@@ -9,19 +12,25 @@ const LIB_PATH: &str = if cfg!(target_arch = "x86_64") {
 };
 
 fn main() -> Result<(), CommonError> {
+    fmt()
+        .pretty()
+        .with_max_level(Level::DEBUG)
+        .with_span_events(FmtSpan::ACTIVE)
+        .init();
+
     let sdk = MysticLightSDK::new(LIB_PATH)?;
 
     let devices: Vec<_> = sdk.devices_iter().collect();
 
-    println!("{:#?}", devices);
+    info!(?devices);
 
-    println!("Second Device name is {}", devices[2].name());
+    info!(second_device_name = devices[2].name());
 
     let keyboard_leds: Vec<_> = devices[2].leds_iter().collect();
 
-    println!("{:#?}", keyboard_leds);
+    info!(?keyboard_leds);
 
-    println!(
+    info!(
         "First led has name: {} with max_bright: {} and max_speed: {}",
         keyboard_leds[0].name(),
         keyboard_leds[0].max_bright(),
@@ -30,9 +39,9 @@ fn main() -> Result<(), CommonError> {
 
     let state = keyboard_leds[0].get_state()?;
 
-    println!("Current device state: {:#?}", state);
+    info!("Current device state: {:#?}", state);
 
-    println!("Disable lightning!");
+    warn!("Disable lightning!");
 
     let new_state = DeviceLedState {
         color: Color {
@@ -48,7 +57,7 @@ fn main() -> Result<(), CommonError> {
 
     thread::sleep(Duration::from_secs(5));
 
-    println!("Enable lightning");
+    warn!("Enable lightning");
 
     keyboard_leds[0].set_state(&state)?;
 

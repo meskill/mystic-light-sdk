@@ -10,6 +10,8 @@ plugins:
         - { type: ci, release: false }
         - { subject: "*\\[skip release\\]*", release: false }
         - { breaking: true, release: minor } # change to major after reaching 1.0.0 version
+        # remove rules below after reaching 1.0.0
+        - { type: feat, release: patch }
   - - '@semantic-release/release-notes-generator'
     - preset: 'conventionalcommits'
       presetConfig:
