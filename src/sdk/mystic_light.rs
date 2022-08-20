@@ -1,5 +1,6 @@
 use std::{
     collections::HashMap,
+    fmt::Debug,
     ptr::null_mut,
     sync::{Arc, Mutex},
 };
@@ -62,6 +63,14 @@ pub struct MysticLightSDK {
     devices: HashMap<String, Device>,
     #[cfg(feature = "async-graphql")]
     lib_path: String,
+}
+
+impl Debug for MysticLightSDK {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("MysticLightSDK")
+            .field("devices", &self.devices)
+            .finish()
+    }
 }
 
 /// Rust Wrapper for the underlying Mystic Light SDK
@@ -187,8 +196,8 @@ impl MysticLightSDK {
     /// Initialize MysticLight SDK with passed path to the dll file
     ///
     /// **You must pass valid dll based on the os architecture**
+    #[tracing::instrument(level = "debug")]
     pub fn new(lib_path: &str) -> Result<Self> {
-        log::debug!("fn:new call");
         let library;
 
         unsafe {
@@ -217,17 +226,15 @@ impl MysticLightSDK {
     }
 
     /// reload cached devices info
+    #[tracing::instrument(level = "debug", skip_all)]
     pub fn reload(&mut self) -> Result<()> {
-        log::debug!("fn:reload call");
-
         self.devices = Self::resolve_devices(&self.library)?;
 
         Ok(())
     }
 
+    #[tracing::instrument(level = "debug", skip_all)]
     fn resolve_devices(library: &Arc<Mutex<Library>>) -> Result<HashMap<String, Device>> {
-        log::debug!("fn:resolve_devices call");
-
         let mut dev_type: DeviceTypes = null_mut();
         let mut led_count: LedCounts = null_mut();
 

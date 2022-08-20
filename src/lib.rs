@@ -53,10 +53,9 @@
 //!
 //! # Usage
 //!
-//! ## logging
+//! ## tracing
 //!
-//! Logging is implemented with library [`log`](https://docs.rs/log/0.4.17/log/index.html) - to enable actual logging just pick one of the logger
-//! implementation from the [list](https://docs.rs/log/0.4.17/log/index.html#available-logging-implementations) and activate log for the module `mystic_light` e.g. for `env_logger` pass `RUST_LOG=mystic_light_sdk`
+//! Tracing is implemented with library [`tracing`](https://docs.rs/tracing/0.1.36/tracing/index.html) - to see tracing logs follow the [instructions of tracing crate](https://docs.rs/tracing/0.1.36/tracing/index.html#in-executables).
 //!
 //! # Features
 //!

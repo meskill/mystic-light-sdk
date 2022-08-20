@@ -1,5 +1,6 @@
 use mystic_light_sdk::{CommonError, MysticLightSDK};
-use std::time::Instant;
+use tracing::{info, Level};
+use tracing_subscriber::{fmt, fmt::format::FmtSpan};
 
 const LIB_PATH: &str = if cfg!(target_arch = "x86_64") {
     "../sdk/MysticLight_SDK_x64.dll"
@@ -8,22 +9,17 @@ const LIB_PATH: &str = if cfg!(target_arch = "x86_64") {
 };
 
 fn main() -> Result<(), CommonError> {
-    let timer = Instant::now();
-    let sdk = MysticLightSDK::new(LIB_PATH)?;
+    fmt()
+        .pretty()
+        .with_max_level(Level::DEBUG)
+        .with_span_events(FmtSpan::FULL)
+        .init();
 
-    println!("Init in {:?} secs", timer.elapsed().as_secs_f32());
+    let sdk = MysticLightSDK::new(LIB_PATH)?;
 
     let devices = sdk.devices_iter();
 
-    println!(
-        "Getting devices for {:#?} secs",
-        timer.elapsed().as_secs_f32()
-    );
-
     let leds = devices.map(|device| device.leds_iter());
-
-    println!("Getting leds for {:#?} secs", timer.elapsed().as_secs_f32());
-
     let states: Vec<Vec<_>> = leds
         .map(|led| {
             led.into_iter()
@@ -32,12 +28,7 @@ fn main() -> Result<(), CommonError> {
         })
         .collect();
 
-    println!(
-        "Getting states for {:#?} secs",
-        timer.elapsed().as_secs_f32()
-    );
-
-    println!("States: {:#?}", states);
+    info!(?states);
 
     Ok(())
 }

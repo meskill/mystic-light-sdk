@@ -139,17 +139,12 @@ impl DeviceLed {
         self.max_speed
     }
 
+    #[tracing::instrument(level = "debug", skip(library))]
     pub(crate) fn new(
         library: Arc<Mutex<Library>>,
         device_name: &str,
         led_index: u32,
     ) -> Result<Self> {
-        log::debug!(
-            "fn:new call with args: device_name={}, led_index={}",
-            device_name,
-            led_index
-        );
-
         let get_led_info: Symbol<
             unsafe extern "C" fn(
                 device_name: DeviceName,
@@ -214,13 +209,7 @@ impl DeviceLed {
 
         drop(library_instance);
 
-        log::debug!(
-            "fn:new got led with: name={}, supported_style={:?}, max_bright={}, max_speed={}",
-            name,
-            supported_styles,
-            max_bright,
-            max_speed
-        );
+        tracing::debug!(name, ?supported_styles, max_bright, max_speed);
 
         Ok(Self {
             library,
@@ -234,9 +223,8 @@ impl DeviceLed {
     }
 
     /// Return state of the led
+    #[tracing::instrument(level = "debug", skip(self), fields(self.name = self.name))]
     pub fn get_state(&self) -> Result<DeviceLedState> {
-        log::debug!("fn:get_state call for led with name={}", &self.name);
-
         let get_led_style: Symbol<
             unsafe extern "C" fn(
                 device_name: DeviceName,
@@ -314,12 +302,7 @@ impl DeviceLed {
 
         let color = Color { red, green, blue };
 
-        log::debug!(
-            "fn:get_state got state with: color={:?}, bright={}, speed={}",
-            color,
-            bright,
-            speed
-        );
+        tracing::debug!(?color, bright, speed);
 
         Ok(DeviceLedState {
             style: Bstr::from(style).to_string(),
@@ -330,12 +313,8 @@ impl DeviceLed {
     }
 
     /// Set led style
+    #[tracing::instrument(level = "debug", skip(self), fields(self.name = self.name))]
     pub fn set_style(&self, style: &str) -> Result<()> {
-        log::debug!(
-            "fn:set_style call for led with name={} with args: style={}",
-            &self.name,
-            style
-        );
         let set_led_style: Symbol<
             unsafe extern "C" fn(
                 device_name: DeviceName,
@@ -378,13 +357,8 @@ impl DeviceLed {
     ///
     /// Some of the styles do not support setting color for the led.
     /// In this case this method will return `Err(CommonError::MysticLightSDKError(Timeout))` as this error is returned by the underlying dll
+    #[tracing::instrument(level = "debug", skip(self), fields(self.name = self.name))]
     pub fn set_color(&self, color: &Color) -> Result<()> {
-        log::debug!(
-            "fn:set_color call with name={} with args: color={:?}",
-            &self.name,
-            color
-        );
-
         let set_led_color: Symbol<
             unsafe extern "C" fn(
                 device_name: DeviceName,
@@ -420,13 +394,8 @@ impl DeviceLed {
     ///
     /// Some of the styles do not support setting color for the led.
     /// In this case this method will return `Err(CommonError::MysticLightSDKError(Timeout))` as this error is returned by the underlying dll
+    #[tracing::instrument(level = "debug", skip(self), fields(self.name = self.name))]
     pub fn set_bright(&self, bright: BrightLevel) -> Result<()> {
-        log::debug!(
-            "fn:set_bright call with name={} with args: bright={}",
-            &self.name,
-            bright
-        );
-
         if bright > self.max_bright {
             return Err(UsageError::ExcessBrightLevel {
                 level: bright,
@@ -464,13 +433,8 @@ impl DeviceLed {
     ///
     /// Some of the styles do not support setting color for the led.
     /// In this case this method will return `Err(CommonError::MysticLightSDKError(Timeout))` as this error is returned by the underlying dll
+    #[tracing::instrument(level = "debug", skip(self), fields(self.name = self.name))]
     pub fn set_speed(&self, speed: SpeedLevel) -> Result<()> {
-        log::debug!(
-            "fn:set_speed call with name={} with args: speed={}",
-            &self.name,
-            speed
-        );
-
         if speed > self.max_speed {
             return Err(UsageError::ExcessSpeedLevel {
                 level: speed,
@@ -508,13 +472,8 @@ impl DeviceLed {
     ///
     /// Some of the styles do not support setting color for the led.
     /// In this case this method will return `Err(CommonError::MysticLightSDKError(Timeout))` as this error is returned by the underlying dll
+    #[tracing::instrument(level = "debug", skip(self), fields(self.name = self.name))]
     pub fn set_state(&self, state: &DeviceLedState) -> Result<()> {
-        log::debug!(
-            "fn:set_state call with name={} with args: state={:?}",
-            &self.name,
-            state
-        );
-
         self.set_style(&state.style)?;
         self.set_bright(state.bright)?;
         self.set_speed(state.speed)?;
