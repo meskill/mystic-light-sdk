@@ -6,6 +6,13 @@ on:
   push:
     branches-ignore:
       - master
+    paths:
+      - 'src/**'
+      - 'Cargo.lock'
+      - 'Cargo.toml'
+      - '.releaserc.yml'
+      - '.github/workflows/publish-test.yml'
+      - '.github/scripts/prepare.sh'
 
 jobs:
   test-publish:

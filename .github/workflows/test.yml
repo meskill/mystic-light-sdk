@@ -38,17 +38,17 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
       - name: Setup Rust toolchain
+        # TODO: migrate to actions-rust-lang/setup-rust-toolchain@v1
         uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
       - name: Rust cache
+        # TODO: migrate to v2
         uses: Swatinem/rust-cache@v1
         with:
           sharedKey: check
       - name: Lint src
-        run: cargo clippy -- -D warnings
-      - name: Lint examples
-        run: cargo clippy --examples -- -D warnings
+        run: cargo clippy --all-targets -- -D warnings
 
   test:
     runs-on: windows-2022
