@@ -6,9 +6,9 @@ Rust SDK wrapper for the [Mystic Light SDK][__link0]
 ## Requirements
 
  1. Any MSI device with RGB support
- 1. Only Windows 7+
- 1. Dragon Center or Msi Center installed and running. You can download it [here][__link1]
- 1. Admin rights to run program with the `mystic_light_sdk`
+ 2. Only Windows 7+
+ 3. Dragon Center or Msi Center installed and running. You can download it [here][__link1]
+ 4. Admin rights to run program with the `mystic_light_sdk`
 
 
 ## Examples
@@ -106,7 +106,7 @@ const LIB_PATH: &str = if cfg!(target_arch = "x86_64") {
 
 As sdk dll is required in runtime you must provide these files somehow in the runtime.
 
-You may use build script included in the library itself to copy directory with sdk to the output directory. To do so provide environment variable `MYSTIC_LIGHT_SDK_PATH` with the path to directory with the sdk’s dll relative to the crate root e.g. `MYSTIC_LIGHT_SDK_PATH=sdk` if you have dlls inside `<crate_root>/sdk` directory
+You may use build script included in the library itself to copy directory with sdk to the output directory. To do so provide environment variable `MYSTIC_LIGHT_SDK_PATH` with **absolute** path to directory with the sdk’s dll e.g. `MYSTIC_LIGHT_SDK_PATH=/workspaces/project/sdk`.
 
 
 ## Panics
@@ -175,7 +175,7 @@ Make sure you have been fulfilled [requirements](#requirements) and you running 
 Some of the device’s styles do not support colors. In this case this kind of error will be generated.
 
 
- [__cargo_doc2readme_dependencies_info]: ggGkYW0AYXSEG52uRQSwBdezG6GWW8ODAbr5G6KRmT_WpUB5G9hPmBcUiIp6YXKEG9xtyNAZAPipG4wMjqR7OtZmG4Tbd1I_axk_G8brULg879U6YWSCgngaTXlzdGljTGlnaHRHcmFwaHFsTXV0YXRpb272gndNeXN0aWNMaWdodEdyYXBocWxRdWVyefY
+ [__cargo_doc2readme_dependencies_info]: ggGkYW0AYXSEG52uRQSwBdezG6GWW8ODAbr5G6KRmT_WpUB5G9hPmBcUiIp6YXKEGwZVjdq2ObFUG5iRsw2sZp7JGwtix7sRa4ihGxFVtj4lRduhYWSCgngaTXlzdGljTGlnaHRHcmFwaHFsTXV0YXRpb272gndNeXN0aWNMaWdodEdyYXBocWxRdWVyefY
  [__link0]: https://www.msi.com/Landing/mystic-light-rgb-gaming-pc/download
  [__link1]: https://www.msi.com/Landing/mystic-light-rgb-gaming-pc/download
  [__link2]: https://docs.rs/tracing/0.1.36/tracing/index.html

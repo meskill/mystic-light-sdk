@@ -1,3 +1,16 @@
+## [0.4.2](https://github.com/meskill/mystic-light-sdk/compare/v0.4.1...v0.4.2) (2022-10-01)
+
+
+### Continuous Integration
+
+* little simplificatin for clippy calls ([d9b3dc1](https://github.com/meskill/mystic-light-sdk/commit/d9b3dc18ccea458c26f60bdfe1c0d03c4d166e8c))
+
+
+### Documentation
+
+* contribution docs fixes ([6c966fb](https://github.com/meskill/mystic-light-sdk/commit/6c966fb83d6b2d46872160dd9830f056ad2edcd2))
+* fix description of proper usage of build script ([0db21cf](https://github.com/meskill/mystic-light-sdk/commit/0db21cf9824b7239d031ee8e327ca532bf4f7676))
+
 ## [0.4.1](https://github.com/meskill/mystic-light-sdk/compare/v0.4.0...v0.4.1) (2022-08-20)
 
 
