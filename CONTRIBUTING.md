@@ -19,16 +19,16 @@ You can now build some of the examples using `cargo build --example disable_ligh
 
 Should work without any hassle.
 
-Run `cargo build --example disable_light_for_5_sec` to build example and `cargo test` to run tests
+Run `cargo run --example disable_light_for_5_sec` to run example and `cargo test` to run tests
 
 ### WSL 2
 
 There is a catch - wsl 2 runs in linux environment, but it still can run windows executable, so we can use WSL 2 linux environment to build actual program and then run built .exe file
 
 1. Install additional libs to able to build windows app following [linux instructions](#linux)
-2. Run `cargo test`
-
-Run `cargo build --example disable_light_for_5_sec` to build example, but you still required to run it outside WSL as it requires Dragon Center to communicate
+2. Open WSL2 Terminal as Administrator
+3. Go to this repository folder
+4. Run `cargo test` or any `cargo run --example ...` command to either execute tests or run an example
 
 
 ### WSL 2 + Docker
@@ -39,12 +39,14 @@ For this either use Remote Containers extension with the provided `.devcontainer
 
 1. Install additional libs to able to build windows app following [linux instructions](#linux)
 2. Mount existing named pipe and scripts to the docker container `type=bind,src=${localWorkspaceFolder}/.devcontainer,dst=${containerWorkspaceFolder}/.devcontainer`
-3. Specify environment variables for container `CONTAINER_PROJECT_HOME` - path to the project inside the container, `HOST_PROJECT_HOME` - path to projects in WSL
+3. Specify environment variables for container, you can use `wsl2-docker.env` file for reference or direct usage:
+   - `CONTAINER_PROJECT_HOME` - path to the project inside the container
+   - `HOST_PROJECT_HOME` - path to projects in WSL.
+   - `CARGO_TARGET_X86_64_PC_WINDOWS_GNU_RUNNER` - relative path to `.devcontainer/send.fish` script
 4. Run the container
-5. You can use `wsl2-docker.env` in order to fill needed environment variable that will wrap execution for the program run
-6. Start new WSL terminal with admin right and execute script `.devcontainer/execute.fish` that will listen for new commands and execute it
-7. Run `cargo test`
-8. Execution will end without any info, but you should see test running output in the WSL terminal
+5. Start new WSL terminal with admin right and execute script `.devcontainer/execute.fish` that will listen for new commands and execute it
+6. Run any `cargo` command
+7. Execution will end without any info, but you should see test running output in the WSL terminal
 
 
-Run `cargo build --example disable_light_for_5_sec` to build example, but you still required to run it outside WSL as it requires Dragon Center to communicate
+Run `cargo run --example disable_light_for_5_sec` to run example
